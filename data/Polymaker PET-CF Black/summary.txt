@@ -1,0 +1,20 @@
+∴ python main.py test --type PET-CF --manufacturer Polymaker --axis xy --trials 5
+
+=== TEST SUMMARY ===
+  Trial 1: 1091.33 N
+  Trial 2: 1002.72 N
+  Trial 3: 940.78 N
+  Trial 4: 917.29 N
+  Trial 5: 1002.54 N
+Average max force: 990.93 N
+
+󰀵 josh  …/loadcell   main !?   v3.13.5   15:11 
+∴ python main.py test --type PET-CF --manufacturer Polymaker --axis z --trials 5
+
+=== TEST SUMMARY ===
+  Trial 1: 345.46 N
+  Trial 2: 294.09 N
+  Trial 3: 362.07 N
+  Trial 4: 360.96 N
+  Trial 5: 306.69 N
+Average max force: 333.85 N

@@ -1,0 +1,20 @@
+∴ python main.py test --type PLApro --manufacturer Polymaker --axis z --trials 5
+
+=== TEST SUMMARY ===
+  Trial 1: 513.85 N
+  Trial 2: 613.78 N
+  Trial 3: 542.34 N
+  Trial 4: 539.02 N
+  Trial 5: 553.87 N
+Average max force: 552.57 N
+
+󰀵 josh  …/loadcell   main !?   v3.13.5   15:21 
+∴ python main.py test --type PLApro --manufacturer Polymaker --axis xy --trials 5
+
+=== TEST SUMMARY ===
+  Trial 1: 750.56 N
+  Trial 2: 747.98 N
+  Trial 3: 705.85 N
+  Trial 4: 644.71 N
+  Trial 5: 677.28 N
+Average max force: 705.28 N
