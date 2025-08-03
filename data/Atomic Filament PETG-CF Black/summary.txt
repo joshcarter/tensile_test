@@ -1,0 +1,34 @@
+=== Test Summary ===
+Manufacturer: Atomic Filament
+Material Type: PETG-CF
+Color: Black
+Axis: xy
+Trials: 5
+Threshold: 50.0 N
+Results:
+  Trial 1: 1002.15 N
+  Trial 2: 1001.68 N
+  Trial 3: 967.87 N
+  Trial 4: 1027.79 N
+  Trial 5: 975.55 N
+Average max force: 995.01 N
+Tensile strength: 49.75 MPa
+
+
+=== Test Summary ===
+Manufacturer: Atomic Filament
+Material Type: PETG-CF
+Color: Black
+Axis: z
+Trials: 5
+Threshold: 50.0 N
+Results:
+  Trial 1: 1093.03 N
+  Trial 2: 941.54 N
+  Trial 3: 1020.18 N
+  Trial 4: 985.34 N
+  Trial 5: 1069.70 N
+Average max force: 1021.96 N
+Tensile strength: 34.07 MPa
+
+

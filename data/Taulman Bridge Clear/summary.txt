@@ -1,0 +1,34 @@
+=== Test Summary ===
+Manufacturer: Taulman
+Material Type: Bridge
+Color: Clear
+Axis: xy
+Trials: 5
+Threshold: 50.0 N
+Results:
+  Trial 1: 607.33 N
+  Trial 2: 631.62 N
+  Trial 3: 599.56 N
+  Trial 4: 644.74 N
+  Trial 5: 627.44 N
+Average max force: 622.14 N
+Tensile strength: 31.11 MPa
+
+
+=== Test Summary ===
+Manufacturer: Taulman
+Material Type: Bridge
+Color: Clear
+Axis: z
+Trials: 5
+Threshold: 50.0 N
+Results:
+  Trial 1: 654.09 N
+  Trial 2: 784.22 N
+  Trial 3: 793.13 N
+  Trial 4: 683.15 N
+  Trial 5: 736.18 N
+Average max force: 730.15 N
+Tensile strength: 24.34 MPa
+
+

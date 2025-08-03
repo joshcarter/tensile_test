@@ -1,0 +1,34 @@
+=== Test Summary ===
+Manufacturer: Siraya Tech
+Material Type: ASA-GF
+Color: Black
+Axis: z
+Trials: 5
+Threshold: 50.0 N
+Results:
+  Trial 1: 625.10 N
+  Trial 2: 693.94 N
+  Trial 3: 541.19 N
+  Trial 4: 553.01 N
+  Trial 5: 629.57 N
+Average max force: 608.56 N
+Tensile strength: 20.29 MPa
+
+
+=== Test Summary ===
+Manufacturer: Siraya Tech
+Material Type: ASA-GF
+Color: Black
+Axis: xy
+Trials: 5
+Threshold: 50.0 N
+Results:
+  Trial 1: 1101.19 N
+  Trial 2: 1212.95 N
+  Trial 3: 1217.52 N
+  Trial 4: 1211.18 N
+  Trial 5: 1079.70 N
+Average max force: 1164.51 N
+Tensile strength: 58.23 MPa
+
+

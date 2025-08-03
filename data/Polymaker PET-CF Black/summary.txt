@@ -1,20 +1,34 @@
-∴ python main.py test --type PET-CF --manufacturer Polymaker --axis xy --trials 5
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PET-CF
+Color: Black
+Axis: xy
+Trials: 5
+Threshold: 50.0 N
+Results:
+  Trial 1: 971.89 N
+  Trial 2: 892.55 N
+  Trial 3: 914.86 N
+  Trial 4: 887.66 N
+  Trial 5: 926.21 N
+Average max force: 918.63 N
+Tensile strength: 45.93 MPa
 
-=== TEST SUMMARY ===
-  Trial 1: 1091.33 N
-  Trial 2: 1002.72 N
-  Trial 3: 940.78 N
-  Trial 4: 917.29 N
-  Trial 5: 1002.54 N
-Average max force: 990.93 N
 
-󰀵 josh  …/loadcell   main !?   v3.13.5   15:11 
-∴ python main.py test --type PET-CF --manufacturer Polymaker --axis z --trials 5
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PET-CF
+Color: Black
+Axis: z
+Trials: 5
+Threshold: 50.0 N
+Results:
+  Trial 1: 773.20 N
+  Trial 2: 644.41 N
+  Trial 3: 362.55 N
+  Trial 4: 696.25 N
+  Trial 5: 397.20 N
+Average max force: 574.72 N
+Tensile strength: 19.16 MPa
 
-=== TEST SUMMARY ===
-  Trial 1: 345.46 N
-  Trial 2: 294.09 N
-  Trial 3: 362.07 N
-  Trial 4: 360.96 N
-  Trial 5: 306.69 N
-Average max force: 333.85 N
+

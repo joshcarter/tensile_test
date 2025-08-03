@@ -296,6 +296,7 @@ class TestApp(App):
                 TEST_RESULT_STRENGTH = TEST_RESULT_FORCE / XY_AXIS_AREA
 
             self.log_summary(dname)
+            self.update_master_summary()
             self.reader.close()
             self.exit()
         else:
@@ -322,6 +323,52 @@ class TestApp(App):
             f.write(f"Average max force: {TEST_RESULT_FORCE:.2f} N\n")
             f.write(f"Tensile strength: {TEST_RESULT_STRENGTH:.2f} MPa\n")
             f.write("\n\n")
+
+    def update_master_summary(self):
+        # Log results to CSV, updating existing rows by type/manufacturer/color
+        csv_path = os.path.join("data", "data.csv")
+        os.makedirs(os.path.dirname(csv_path), exist_ok=True)
+
+        # Read existing data
+        rows = []
+        fieldnames = ["brand", "material type", "color", "xy strength (Mpa)", "z strength (Mpa)"]
+        if os.path.exists(csv_path) and os.stat(csv_path).st_size > 0:
+            with open(csv_path, newline="") as csv_file:
+                reader = csv.DictReader(csv_file)
+                for row in reader:
+                    rows.append(row)
+
+        # Prepare updated row
+        xy_val = f"{TEST_RESULT_STRENGTH:.2f}" if self.axis == "xy" else ""
+        z_val = f"{TEST_RESULT_STRENGTH:.2f}" if self.axis == "z" else ""
+        found = False
+        for row in rows:
+            if (row["brand"] == self.manufacturer and
+                row["material type"] == self.type and
+                row["color"] == self.color):
+                # Update the proper column
+                if self.axis == "xy":
+                    row["xy strength (Mpa)"] = xy_val
+                else:
+                    row["z strength (Mpa)"] = z_val
+                found = True
+                break
+
+        # Append new row if not found
+        if not found:
+            rows.append({
+                "brand": self.manufacturer,
+                "material type": self.type,
+                "color": self.color,
+                "xy strength (Mpa)": xy_val,
+                "z strength (Mpa)": z_val
+            })
+
+        # Write all rows back to CSV
+        with open(csv_path, "w", newline="") as csv_file:
+            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(rows)
 
     def update_plot(self):
         """Re-render 5 s sparkline of force in N."""
