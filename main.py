@@ -126,19 +126,25 @@ class CalibrateApp(App):
         if self.stage < len(CAL_WEIGHTS):
             self.start_stage()
         else:
-            # 8) Compute slope: average of (Δraw / force) across all non‐zero weights
-            zero_reading = self.stage_readings[0]
-            slopes = [
-                (reading - zero_reading) / (weight * G)
-                for reading, weight in zip(self.stage_readings[1:], CAL_WEIGHTS[1:])
-            ]
-            self.slope = statistics.mean(slopes)
+            # 8) Perform linear regression on raw readings vs known forces
+            forces = [w * G for w in CAL_WEIGHTS]
+            readings = self.stage_readings
+            slope, intercept = statistics.linear_regression(forces, readings)
 
-            # 9) Persist calibration
+            # 9) Check for outliers: ensure each reading is within 5% of the regression prediction
+            tol = 0.05
+            for w, r in zip(CAL_WEIGHTS, readings):
+                predicted = intercept + slope * (w * G)
+                if abs(r - predicted) > tol * r:
+                    sys.exit(f"Calibration error: {w} kg reading {r:.2f} deviates by more than {tol*100:.1f}%")
+
+            # 10) Persist calibration with regression intercept as offset
+            self.offset = intercept
+            self.slope = slope
             with open(CAL_FILE, "w") as cal_f:
-                json.dump({"offset": zero_reading, "slope": self.slope}, cal_f, indent=2)
+                json.dump({"offset": self.offset, "slope": self.slope}, cal_f, indent=2)
 
-            # 10) Clean up
+            # 11) Clean up and exit
             self.reader.close()
             self.exit()
 
