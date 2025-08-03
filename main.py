@@ -97,35 +97,48 @@ class CalibrateApp(App):
         self.set_timer(2.0, self.finish_stage)
 
     def finish_stage(self):
-        """Called after 2 s of data collection."""
-        # log to file
+        """Called after 2 s of data collection for the current weight."""
+        # 1) Log raw samples for record
         fname = f"calibration-{CAL_WEIGHTS[self.stage]}.csv"
-        with open(fname, "w", newline="") as f:
-            for i in range(len(self.stage_samples)):
-                f.write(f"{i + 1},{self.stage_samples[i]}\n")
+        os.makedirs("calibration_data", exist_ok=True)
+        with open(os.path.join("calibration_data", fname), "w", newline="") as f:
+            for i, sample in enumerate(self.stage_samples, start=1):
+                f.write(f"{i},{sample}\n")
 
+        # 2) Compute this stage's average raw reading
         avg = statistics.mean(self.stage_samples) if self.stage_samples else 0.0
-        self.stage += 1
-        # record reading
+
+        # 3) Initialize readings list on first call
+        if not hasattr(self, "stage_readings"):
+            self.stage_readings = []
+
+        # 4) On the 0 kg stage, capture your zero‐offset
         if self.offset is None:
             self.offset = avg
-            self.stage_readings = [avg]
-        else:
-            self.stage_readings.append(avg)
 
-        self.stage_readings = getattr(self, "stage_readings", []) + [avg]
+        # 5) Record this stage's average
+        self.stage_readings.append(avg)
 
+        # 6) Advance to next weight
+        self.stage += 1
+
+        # 7) Either loop for more stages or finalize calibration
         if self.stage < len(CAL_WEIGHTS):
             self.start_stage()
         else:
-            # compute slope & save
-            zero = self.stage_readings[0]
+            # 8) Compute slope: average of (Δraw / force) across all non‐zero weights
+            zero_reading = self.stage_readings[0]
             slopes = [
-                (r - zero) / (w * G)
-                for r, w in zip(self.stage_readings[1:], CAL_WEIGHTS[1:])
+                (reading - zero_reading) / (weight * G)
+                for reading, weight in zip(self.stage_readings[1:], CAL_WEIGHTS[1:])
             ]
             self.slope = statistics.mean(slopes)
-            json.dump({"offset": zero, "slope": self.slope}, open(CAL_FILE, "w"), indent=2)
+
+            # 9) Persist calibration
+            with open(CAL_FILE, "w") as cal_f:
+                json.dump({"offset": zero_reading, "slope": self.slope}, cal_f, indent=2)
+
+            # 10) Clean up
             self.reader.close()
             self.exit()
 
