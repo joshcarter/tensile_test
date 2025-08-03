@@ -4,18 +4,20 @@ tensile_tester.py
 
 Usage:
   # 1) Calibrate:
-  python tensile_tester.py calibrate --port /dev/ttyACM1
+  python tensile_tester.py calibrate --port /dev/cu.usbserial101
 
   # 2) Test:
   python tensile_tester.py test \
-    --port /dev/ttyACM1 \
-    --type LDPE \
-    --manufacturer "ACME Plastics" \
-    --axis z \
+    --port /dev/cu.usbserial101 \
+    --type PETG \
+    --manufacturer "Atomic Filament" \
+    --color "black" \
+    --axis xy \
     --trials 5 \
-    --threshold 50
+
+The port will be auto-detected if not specified (MacOS only), but you can also pass it explicitly.
 """
-import argparse, json, os, sys, time, csv, statistics
+import argparse, json, os, sys, time, csv, statistics, io, zipfile
 from collections import deque
 
 from serial_helper import SerialMovingAverageReader
@@ -30,32 +32,34 @@ from textual.containers import Container
 G = 9.80665  # m/s²
 CAL_FILE = "calibration.json"
 CAL_WEIGHTS = [0.0, 8.0, 16.0, 31.6]  # kg
-SAMPLE_INTERVAL = 0.01    # 100 Hz
-DROP_DURATION   = 10.0    # seconds below threshold to end trial
-SPARK_BLOCKS    = "▁▂▃▄▅▆▇█"
+SAMPLE_INTERVAL = 0.01  # 100 Hz
+DROP_DURATION = 10.0  # seconds below threshold to end trial
+SPARK_BLOCKS = "▁▂▃▄▅▆▇█"
 SPARK_DURATION = 1.5
+XY_AXIS_AREA = 20  # mm^2 cross-sectional area for the XY axis test
+Z_AXIS_AREA = 30  # mm^2 cross-sectional area for the Z axis test
 
 TEST_RESULTS = []  # will hold max forces per trial
-
-
+TEST_RESULT_FORCE = None  # will hold the final average force
+TEST_RESULT_STRENGTH = None  # will hold the final average strength
 
 class CalibrateApp(App):
     """TUI for calibration."""
     CSS_PATH = None
     BINDINGS = [("enter", "proceed", "Next")]
 
-    def __init__(self, port:str):
+    def __init__(self, port: str):
         super().__init__()
         self.port = port
         self.reader = None
 
-        self.data = deque()       # (t, raw)
-        self.stage = 0            # index into CAL_WEIGHTS
-        self.stage_samples = []   # raw readings for current stage
+        self.data = deque()  # (t, raw)
+        self.stage = 0  # index into CAL_WEIGHTS
+        self.stage_samples = []  # raw readings for current stage
         self.collecting = False
 
         self.offset = None
-        self.slope  = None
+        self.slope = None
 
     def compose(self) -> ComposeResult:
         yield Static("", id="header")
@@ -98,7 +102,7 @@ class CalibrateApp(App):
         fname = f"calibration-{CAL_WEIGHTS[self.stage]}.csv"
         with open(fname, "w", newline="") as f:
             for i in range(len(self.stage_samples)):
-                f.write(f"{i+1},{self.stage_samples[i]}\n")
+                f.write(f"{i + 1},{self.stage_samples[i]}\n")
 
         avg = statistics.mean(self.stage_samples) if self.stage_samples else 0.0
         self.stage += 1
@@ -127,7 +131,7 @@ class CalibrateApp(App):
 
     def update_reading(self):
         """Read one raw sample + timestamp; append to buffers."""
-        sample = self.reader.read_raw()
+        sample = self.reader.read_raw()  # Use the raw readings as we're going to average anyway.
         t = time.monotonic()
         # store for sparkline
         self.data.append((t, sample))
@@ -152,29 +156,31 @@ class CalibrateApp(App):
         rng = hi - lo or 1.0
         chars = []
         for v in data:
-            lvl = int((v - lo) / rng * (len(SPARK_BLOCKS)-1))
+            lvl = int((v - lo) / rng * (len(SPARK_BLOCKS) - 1))
             chars.append(SPARK_BLOCKS[lvl])
         return "".join(chars)
+
 
 class TestApp(App):
     """TUI for running tensile trials."""
     CSS_PATH = None
 
-    def __init__(self, port, mat_type, manufacturer, axis, trials, threshold):
+    def __init__(self, port, mat_type, manufacturer, color, axis, trials, threshold):
         super().__init__()
         self.port = port
         self.type = mat_type
         self.manufacturer = manufacturer
+        self.color = color
         self.axis = axis
         self.trials = trials
         self.threshold = threshold
 
         self.reader = None
         self.offset = None
-        self.slope  = None
+        self.slope = None
 
-        self.data = deque()      # (t, raw, F)
-        self.state = "waiting"   # waiting -> measuring -> done
+        self.data = deque()  # (t, raw, F)
+        self.state = "waiting"  # waiting -> measuring -> done
         self.trial_idx = 1
         self.trial_start = None
         self.below_since = None
@@ -243,18 +249,34 @@ class TestApp(App):
         # else done or exiting — ignore further input
 
     def finish_trial(self):
-        # write CSV
-        fname = f"{self.manufacturer}-{self.type}-{self.axis}-{self.trial_idx}.csv"
-        with open(fname, "w", newline="") as f:
-            w = csv.writer(f)
-            w.writerow(["time_ms","force_N"])
-            w.writerows(self.trial_samples)
-        maxF = max(f for _,f in self.trial_samples)
+        dname = f"data/{self.manufacturer} {self.type} {self.color}"
+        os.makedirs(dname, exist_ok=True)
+
+        # write ZIP-compressed CSV
+        fname = f"{self.axis}-trial-{self.trial_idx}.csv"
+        with zipfile.ZipFile(os.path.join(dname, fname + ".zip"), "w", compression=zipfile.ZIP_DEFLATED) as zipf:
+            with io.StringIO() as csv_buffer:
+                w = csv.writer(csv_buffer)
+                w.writerow(["time_ms", "force_N"])
+                w.writerows(self.trial_samples)
+                zipf.writestr(fname, csv_buffer.getvalue())
+
+        maxF = max(f for _, f in self.trial_samples)
         self.results.append(maxF)
         TEST_RESULTS.append(maxF)
         self.trial_idx += 1
 
         if self.trial_idx > self.trials:
+            # auto-quit when all trials are done
+            global TEST_RESULT_FORCE, TEST_RESULT_STRENGTH
+            TEST_RESULT_FORCE = statistics.mean(self.results)
+
+            if self.axis == "z":
+                TEST_RESULT_STRENGTH = TEST_RESULT_FORCE / Z_AXIS_AREA
+            else:
+                TEST_RESULT_STRENGTH = TEST_RESULT_FORCE / XY_AXIS_AREA
+
+            self.log_summary(dname)
             self.reader.close()
             self.exit()
         else:
@@ -264,11 +286,30 @@ class TestApp(App):
             self.data.clear()
             self.reader.reset()
 
+    def log_summary(self, dname):
+        """Write a summary of the test results to a file."""
+        fname = os.path.join(dname, f"summary.txt")
+        with open(fname, "a") as f:
+            f.write("=== Test Summary ===\n")
+            f.write(f"Manufacturer: {self.manufacturer}\n")
+            f.write(f"Material Type: {self.type}\n")
+            f.write(f"Color: {self.color}\n")
+            f.write(f"Axis: {self.axis}\n")
+            f.write(f"Trials: {self.trials}\n")
+            f.write(f"Threshold: {self.threshold} N\n")
+            f.write("Results:\n")
+            for i, res in enumerate(self.results, 1):
+                f.write(f"  Trial {i}: {res:.2f} N\n")
+            f.write(f"Average max force: {TEST_RESULT_FORCE:.2f} N\n")
+            f.write(f"Tensile strength: {TEST_RESULT_STRENGTH:.2f} MPa\n")
+            f.write("\n\n")
+
     def update_plot(self):
         """Re-render 5 s sparkline of force in N."""
-        arr = [F for _,_,F in self.data]
+        arr = [F for _, _, F in self.data]
         plot = CalibrateApp.make_sparkline(arr)
         self.query_one("#plot", Static).update(Panel(plot, title="force [N]"))
+
 
 def main():
     p = argparse.ArgumentParser()
@@ -279,12 +320,13 @@ def main():
     c.set_defaults(mode="calibrate")
 
     t = subs.add_parser("test")
-    t.add_argument("--port",         "-p", required=False, default=None)
-    t.add_argument("--type",         "-t", required=True)
+    t.add_argument("--port", "-p", required=False, default=None)
+    t.add_argument("--type", "-t", required=True)
     t.add_argument("--manufacturer", "-m", required=True)
-    t.add_argument("--axis",    choices=("xy","z"), required=True)
-    t.add_argument("--trials",   type=int,     default=5)
-    t.add_argument("--threshold",type=float,   default=50.0)
+    t.add_argument("--color", "-c", required=True)
+    t.add_argument("--axis", "-a", choices=("xy", "z"), required=True)
+    t.add_argument("--trials", type=int, default=5)
+    t.add_argument("--threshold", type=float, default=50.0)
     t.set_defaults(mode="test")
 
     args = p.parse_args()
@@ -296,15 +338,19 @@ def main():
             args.port,
             args.type,
             args.manufacturer,
+            args.color,
             args.axis,
             args.trials,
             args.threshold,
         ).run()
-        # after auto-quit, print summary
+
+        # need to print this after the TUI exits
         print("\n=== TEST SUMMARY ===")
-        for i, f in enumerate(TEST_RESULTS, 1):
-            print(f"  Trial {i}: {f:.2f} N")
-        print(f"Average max force: {statistics.mean(TEST_RESULTS):.2f} N")
+        for i, res in enumerate(TEST_RESULTS, 1):
+            print(f"  Trial {i}: {res:.2f} N")
+        print(f"Average max force: {TEST_RESULT_FORCE:.2f} N")
+        print(f"Tensile strength: {TEST_RESULT_STRENGTH:.2f} MPa")
+
 
 if __name__ == "__main__":
     main()

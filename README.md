@@ -12,6 +12,10 @@ I use this for measuring the tensile strength of 3D printed plastics. There is a
 - Interface board
 - Laptop with USB connection to interface board
 
+## Test Fixture Calibration
+
+TODO: It would be a great idea to document how to calibrate this. In the meantime, contact me.
+
 ## Test Parts
 
 See `printed_parts/Tensile test samples.3mf`. These are sized to fit within the limits of my 200kg load cell. Note that the Z axis has additional cross-sectional area since the Z axis is usually substantially weaker.
@@ -33,4 +37,4 @@ The MicroPython code for the Pico is in the `pico` subdirectory.
 
 All of my collected data is in the `data` subdirectory. Note than any measurements in Newtons needs to be converted to megapascals (divide by cross-sectional area) to get the actual strength. The XY cross-sectional area is 20mm^2 and Z cross-sectional area is 30mm^2.
 
-TBD: just put the data in this README.
+TODO: just put the data in this README. Surely that's what people actually care about.

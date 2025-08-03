@@ -2,7 +2,13 @@ import serial
 from collections import deque
 import os, sys
 
+
 class SerialMovingAverageReader:
+    """
+    A helper class to read a stream of floats from a serial port and return a smoothed average of those readings.
+    For use with a XH711 load cell amp (running at 80Hz) connected to a Raspberry Pi Pico or similar microcontroller.
+    """
+
     def __init__(self, port, baud=115200, timeout=0.1, window_size=3):
         """
         :param port:      Serial port device (e.g. '/dev/ttyACM1')
@@ -52,11 +58,6 @@ class SerialMovingAverageReader:
             if len(self.buffer) == self.buffer.maxlen:
                 break
 
-        # raw = self.read_raw()
-        # if raw is None:
-        #     return None
-        # self.buffer.append(raw)
-
         return sum(self.buffer) / len(self.buffer)
 
     def close(self):
@@ -75,6 +76,7 @@ def test_serial():
         print("Exiting...")
     finally:
         s.close()
+
 
 if __name__ == "__main__":
     test_serial()
