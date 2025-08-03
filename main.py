@@ -3,270 +3,308 @@
 tensile_tester.py
 
 Usage:
-  # Calibrate (unchanged):
+  # 1) Calibrate:
   python tensile_tester.py calibrate --port /dev/ttyACM1
 
-  # Run test with GUI:
+  # 2) Test:
   python tensile_tester.py test \
     --port /dev/ttyACM1 \
     --type LDPE \
     --manufacturer "ACME Plastics" \
+    --axis z \
     --trials 5 \
     --threshold 50
 """
+import argparse, json, os, sys, time, csv, statistics
+from collections import deque
 
-import argparse, serial, time, json, statistics, sys, os, csv
-import tkinter as tk
-from tkinter import ttk
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import signal
+from serial_helper import SerialMovingAverageReader
+
+from rich.panel import Panel
+from rich.text import Text
+
+from textual.app import App, ComposeResult
+from textual.widgets import Static
+from textual.containers import Container
 
 G = 9.80665  # m/s²
 CAL_FILE = "calibration.json"
-SAMPLE_INTERVAL = 0.01  # seconds between reads
-DROP_DURATION = 10.0  # seconds below threshold to end trial
-shutdown_requested = False
+CAL_WEIGHTS = [0.0, 8.0, 16.0, 31.6]  # kg
+SAMPLE_INTERVAL = 0.01    # 100 Hz
+DROP_DURATION   = 10.0    # seconds below threshold to end trial
+SPARK_BLOCKS    = "▁▂▃▄▅▆▇█"
+SPARK_DURATION = 1.5
+
+TEST_RESULTS = []  # will hold max forces per trial
 
 
-def connect_serial(port, baud=115200, timeout=1):
-    ser = serial.Serial(port, baud, timeout=timeout)
-    ser.reset_input_buffer()
-    return ser
 
+class CalibrateApp(App):
+    """TUI for calibration."""
+    CSS_PATH = None
+    BINDINGS = [("enter", "proceed", "Next")]
 
-def read_raw(ser):
-    line = ser.readline().decode("utf-8").strip()
-    try:
-        return float(line)
-    except:
-        return None
+    def __init__(self, port:str):
+        super().__init__()
+        self.port = port
+        self.reader = None
 
+        self.data = deque()       # (t, raw)
+        self.stage = 0            # index into CAL_WEIGHTS
+        self.stage_samples = []   # raw readings for current stage
+        self.collecting = False
 
-def average_reading(ser, count=50, delay=0.05):
-    ser.reset_input_buffer()
-    vals = []
-    while len(vals) < count:
-        r = read_raw(ser)
-        if r is not None:
-            vals.append(r)
-        time.sleep(delay)
-    return statistics.mean(vals)
+        self.offset = None
+        self.slope  = None
 
+    def compose(self) -> ComposeResult:
+        yield Static("", id="header")
+        yield Static("", id="plot", expand=True)
+        yield Static("", id="footer")
 
-def measure_trial(ser, threshold, offset, slope):
-    """
-    Wait for reading > threshold, then capture samples until it
-    stays below threshold continuously for DROP_DURATION seconds.
-    Returns a list of dicts: {'t': seconds, 'raw':counts, 'N':force}.
-    """
-    ser.reset_input_buffer()
+    async def on_mount(self):
+        # connect & start polling
+        self.reader = SerialMovingAverageReader(self.port)
+        self.start_stage()
 
-    # wait for start
-    while True:
-        r = read_raw(ser)
-        if r is None: continue
-        F = (r - offset) / slope
-        if F >= threshold:
-            start_time = time.monotonic()
-            break
+        # periodic updates
+        self.set_interval(SAMPLE_INTERVAL, self.update_reading)
+        self.set_interval(0.2, SAMPLE_PLOT := self.update_plot)
 
-    samples = []
-    below_since = None
+    def start_stage(self):
+        """Prepare for the next weight stage."""
+        w = CAL_WEIGHTS[self.stage]
+        self.collecting = False
+        self.stage_samples.clear()
+        self.data.clear()
+        self.reader.reset()
+        self.query_one("#header", Static).update(
+            f"[b]MODE:[/] calibrate    [b]PLACE[/] {w} kg, then ⏎"
+        )
+        self.query_one("#footer", Static).update("waiting for ⏎…")
 
-    # capture loop
-    while True:
-        now = time.monotonic()
-        r = read_raw(ser)
-        if r is None:
-            time.sleep(SAMPLE_INTERVAL)
-            continue
-        t = now - start_time
-        F = (r - offset) / slope
-        samples.append({'t': t, 'raw': r, 'N': F})
-
-        # check drop-below-threshold timer
-        if F < threshold:
-            if below_since is None:
-                below_since = now
-            elif (now - below_since) >= DROP_DURATION:
-                break
-        else:
-            below_since = None
-
-        time.sleep(SAMPLE_INTERVAL)
-
-    return samples
-
-
-def run_test_with_gui(args):
-    print("starting gui")
-    update_id = None
-
-    # load calibration
-    if not os.path.exists(CAL_FILE):
-        print("No calibration found. Run `calibrate` first.");
-        sys.exit(1)
-    cal = json.load(open(CAL_FILE))
-    off, m = cal["offset"], cal["slope"]
-
-    ser = connect_serial(args.port)
-    print('connected to', ser.portstr)
-
-    # Set up GUI
-    root = tk.Tk()
-    root.title("Tensile Tester")
-
-    # Top frame: live readings
-    top = ttk.Frame(root, padding=10)
-    top.pack(side=tk.TOP, fill=tk.X)
-    raw_var = tk.StringVar(value="Raw: –")
-    N_var = tk.StringVar(value="Force: – N")
-    ttk.Label(top, textvariable=raw_var, font=("TkDefaultFont", 14)).pack(side=tk.LEFT, padx=10)
-    ttk.Label(top, textvariable=N_var, font=("TkDefaultFont", 14)).pack(side=tk.LEFT, padx=10)
-
-    # Bottom frame: matplotlib plot
-    fig, ax = plt.subplots(figsize=(5, 3))
-    ax.set_xlabel("Time (s)")
-    ax.set_ylabel("Force (N)")
-    line, = ax.plot([], [], lw=2)
-    ax.set_xlim(0, 10)
-    ax.set_ylim(0, max(args.threshold * 2, 200))  # initial scale
-
-    canvas = FigureCanvasTkAgg(fig, master=root)
-    canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-
-    def do_trials():
-        results = []
-        for ti in range(1, args.trials + 1):
-            raw_var.set(f"Trial {ti}: waiting…")
-            root.update()
-
-            samples = measure_trial(ser, args.threshold, off, m)
-
-            # log to CSV
-            fname = f"trial_{ti}.csv"
-            with open(fname, "w", newline="") as f:
-                w = csv.DictWriter(f, fieldnames=['t', 'raw', 'N'])
-                w.writeheader()
-                w.writerows(samples)
-
-            maxN = max(s['N'] for s in samples)
-            results.append(maxN)
-            print(f"Trial {ti} max = {maxN:.2f} N  →   saved {fname}")
-
-        # summary
-        avg = statistics.mean(results)
-        print("\n=== Summary ===")
-        for i, f in enumerate(results, 1):
-            print(f"  Trial {i}: {f:.2f} N")
-        print(f"\nAverage: {avg:.2f} N")
-        raw_var.set("Done.")
-        N_var.set(f"Avg max: {avg:.2f} N")
-
-    # live-update loop for GUI & plotting
-    times, forces = [], []
-
-    def live_update():
-        if shutdown_requested:
+    def action_proceed(self):
+        """User pressed Enter → begin 2 s collection."""
+        if self.collecting:
             return
+        self.collecting = True
+        self.query_one("#footer", Static).update("collecting 2 s…")
+        # after 2 s, finish this stage
+        self.set_timer(2.0, self.finish_stage)
 
-        r = read_raw(ser)
-        if r is not None:
-            F = (r - off) / m
-            t = time.monotonic()
-            # update labels
-            raw_var.set(f"Raw: {r:.0f}")
-            N_var.set(f"Force: {F:.1f} N")
-            # update plot buffer (last 10s window)
-            if times and (t - times[0]) > 10:
-                # shift window
-                while times and (t - times[0]) > 10:
-                    times.pop(0);
-                    forces.pop(0)
-                ax.set_xlim(times[0], times[0] + 10)
-            times.append(t)
-            forces.append(F)
-            line.set_data(times, forces)
-            ax.relim();
-            ax.autoscale_view(False, True, False)
-            canvas.draw()
-        root.after(int(SAMPLE_INTERVAL * 1000), live_update)
-        update_id = root.after(int(SAMPLE_INTERVAL*1000), live_update)
+    def finish_stage(self):
+        """Called after 2 s of data collection."""
+        # log to file
+        fname = f"calibration-{CAL_WEIGHTS[self.stage]}.csv"
+        with open(fname, "w", newline="") as f:
+            for i in range(len(self.stage_samples)):
+                f.write(f"{i+1},{self.stage_samples[i]}\n")
 
-    def clean_shutdown():
-        nonlocal update_id
-        global shutdown_requested
-        shutdown_requested = True
-        try:
-            if update_id:
-                root.after_cancel(update_id)
-        except Exception as e:
-            print("Error cancelling update:", e)
-        try:
-            ser.close()
-        except:
-            pass
-        root.destroy()
+        avg = statistics.mean(self.stage_samples) if self.stage_samples else 0.0
+        self.stage += 1
+        # record reading
+        if self.offset is None:
+            self.offset = avg
+            self.stage_readings = [avg]
+        else:
+            self.stage_readings.append(avg)
 
-    # For Ctrl+C
-    signal.signal(signal.SIGINT, lambda s, f: clean_shutdown())
+        self.stage_readings = getattr(self, "stage_readings", []) + [avg]
 
-    # For window close button
-    root.protocol("WM_DELETE_WINDOW", clean_shutdown)
+        if self.stage < len(CAL_WEIGHTS):
+            self.start_stage()
+        else:
+            # compute slope & save
+            zero = self.stage_readings[0]
+            slopes = [
+                (r - zero) / (w * G)
+                for r, w in zip(self.stage_readings[1:], CAL_WEIGHTS[1:])
+            ]
+            self.slope = statistics.mean(slopes)
+            json.dump({"offset": zero, "slope": self.slope}, open(CAL_FILE, "w"), indent=2)
+            self.reader.close()
+            self.exit()
 
-    # start live updates & trials
-    update_id = root.after(100, live_update)
-    root.after(500, lambda: do_trials())
-    print('entering main loop')
-    root.mainloop()
+    def update_reading(self):
+        """Read one raw sample + timestamp; append to buffers."""
+        sample = self.reader.read_raw()
+        t = time.monotonic()
+        # store for sparkline
+        self.data.append((t, sample))
+        # trim older than 5 s
+        while self.data and (t - self.data[0][0]) > SPARK_DURATION:
+            self.data.popleft()
+        # if collecting stage samples
+        if self.collecting:
+            self.stage_samples.append(sample)
 
-    try:
-        print('closing serial port')
-        ser.close()
-    except:
-        pass
+    def update_plot(self):
+        """Re-render the 5 s sparkline of raw data."""
+        arr = [r for _, r in self.data]
+        plot = self.make_sparkline(arr)
+        self.query_one("#plot", Static).update(Panel(plot, title="raw counts"))
 
+    @staticmethod
+    def make_sparkline(data: list[float]) -> str:
+        if not data:
+            return ""
+        lo, hi = min(data), max(data)
+        rng = hi - lo or 1.0
+        chars = []
+        for v in data:
+            lvl = int((v - lo) / rng * (len(SPARK_BLOCKS)-1))
+            chars.append(SPARK_BLOCKS[lvl])
+        return "".join(chars)
 
-def calibrate(args):
-    # unchanged from before...
-    ser = connect_serial(args.port)
-    input("1) Remove weight → Enter")
-    zero = average_reading(ser)
-    print(f"Zero: {zero}")
-    weights = [16, 24, 32]
-    readings = []
-    for w in weights:
-        input(f"2) Place {w}kg → Enter")
-        r = average_reading(ser)
-        readings.append(r)
-        print(f"{w}kg → {r}")
-    deltas = [r - zero for r in readings]
-    forces = [w * G for w in weights]
-    m = statistics.mean(delta / F for delta, F in zip(deltas, forces))
-    json.dump({"offset": zero, "slope": m}, open(CAL_FILE, "w"), indent=2)
-    print("Saved calibration.")
+class TestApp(App):
+    """TUI for running tensile trials."""
+    CSS_PATH = None
 
+    def __init__(self, port, mat_type, manufacturer, axis, trials, threshold):
+        super().__init__()
+        self.port = port
+        self.type = mat_type
+        self.manufacturer = manufacturer
+        self.axis = axis
+        self.trials = trials
+        self.threshold = threshold
+
+        self.reader = None
+        self.offset = None
+        self.slope  = None
+
+        self.data = deque()      # (t, raw, F)
+        self.state = "waiting"   # waiting -> measuring -> done
+        self.trial_idx = 1
+        self.trial_start = None
+        self.below_since = None
+        self.trial_samples = []  # (ms, F)
+        self.results = []
+
+    def compose(self) -> ComposeResult:
+        yield Static("", id="header")
+        yield Static("", id="plot", expand=True)
+        yield Static("", id="footer")
+
+    async def on_mount(self):
+        # load calibration
+        cal = json.load(open(CAL_FILE))
+        self.offset, self.slope = cal["offset"], cal["slope"]
+
+        # serial
+        self.reader = SerialMovingAverageReader(self.port)
+
+        # start polling
+        self.set_interval(SAMPLE_INTERVAL, self.update_reading)
+        self.set_interval(0.2, self.update_plot)
+
+        # initialize UI
+        self.query_one("#header", Static).update(
+            f"[b]MODE:[/] test    [b]RAW:[/] –    [b]N:[/] –    "
+            f"[b]TYPE:[/] {self.type}    [b]AXIS:[/] {self.axis}    "
+        )
+        self.query_one("#footer", Static).update("below threshold…")
+
+    def update_reading(self):
+        sample = self.reader.read_smoothed()
+        now = time.monotonic()
+        # convert to N
+        F = (sample - self.offset) / self.slope
+        # update header
+        hdr = self.query_one("#header", Static)
+        hdr.update(
+            f"[b]MODE:[/] test    [b]RAW:[/] {sample:.0f}    [b]N:[/] {F:.1f}    "
+            f"[b]TYPE:[/] {self.type}    [b]AXIS:[/] {self.axis}    "
+            f"[b]TRIAL:[/] {self.trial_idx}/{self.trials}    "
+        )
+        # keep 5 s plot buffer
+        self.data.append((now, sample, F))
+        while self.data and (now - self.data[0][0]) > SPARK_DURATION:
+            self.data.popleft()
+
+        # state machine
+        if self.state == "waiting":
+            if F >= self.threshold:
+                self.state = "measuring"
+                self.trial_start = now
+                self.below_since = None
+                self.trial_samples.clear()
+                self.query_one("#footer", Static).update("measuring…")
+        elif self.state == "measuring":
+            t_ms = int((now - self.trial_start) * 1000)
+            self.trial_samples.append((t_ms, F))
+            if F >= self.threshold:
+                self.below_since = None
+            else:
+                if self.below_since is None:
+                    self.below_since = now
+                elif (now - self.below_since) >= DROP_DURATION:
+                    self.finish_trial()
+        # else done or exiting — ignore further input
+
+    def finish_trial(self):
+        # write CSV
+        fname = f"{self.manufacturer}-{self.type}-{self.axis}-{self.trial_idx}.csv"
+        with open(fname, "w", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["time_ms","force_N"])
+            w.writerows(self.trial_samples)
+        maxF = max(f for _,f in self.trial_samples)
+        self.results.append(maxF)
+        TEST_RESULTS.append(maxF)
+        self.trial_idx += 1
+
+        if self.trial_idx > self.trials:
+            self.reader.close()
+            self.exit()
+        else:
+            # next trial
+            self.state = "waiting"
+            self.query_one("#footer", Static).update("below threshold…")
+            self.data.clear()
+            self.reader.reset()
+
+    def update_plot(self):
+        """Re-render 5 s sparkline of force in N."""
+        arr = [F for _,_,F in self.data]
+        plot = CalibrateApp.make_sparkline(arr)
+        self.query_one("#plot", Static).update(Panel(plot, title="force [N]"))
 
 def main():
     p = argparse.ArgumentParser()
     subs = p.add_subparsers(dest="cmd", required=True)
 
-    c1 = subs.add_parser("calibrate");
-    c1.add_argument("-p", "--port", required=True);
-    c1.set_defaults(func=calibrate)
+    c = subs.add_parser("calibrate")
+    c.add_argument("--port", "-p", required=False, default=None)
+    c.set_defaults(mode="calibrate")
 
-    c2 = subs.add_parser("test")
-    c2.add_argument("-p", "--port", required=True)
-    c2.add_argument("-t", "--type", required=True)
-    c2.add_argument('-m", '"--manufacturer", required=True)
-    c2.add_argument("--trials", type=int, default=5)
-    c2.add_argument("--threshold", type=float, default=50.0)
-    c2.set_defaults(func=run_test_with_gui)
+    t = subs.add_parser("test")
+    t.add_argument("--port",         "-p", required=False, default=None)
+    t.add_argument("--type",         "-t", required=True)
+    t.add_argument("--manufacturer", "-m", required=True)
+    t.add_argument("--axis",    choices=("xy","z"), required=True)
+    t.add_argument("--trials",   type=int,     default=5)
+    t.add_argument("--threshold",type=float,   default=50.0)
+    t.set_defaults(mode="test")
 
     args = p.parse_args()
-    args.func(args)
 
+    if args.mode == "calibrate":
+        CalibrateApp(args.port).run()
+    else:
+        TestApp(
+            args.port,
+            args.type,
+            args.manufacturer,
+            args.axis,
+            args.trials,
+            args.threshold,
+        ).run()
+        # after auto-quit, print summary
+        print("\n=== TEST SUMMARY ===")
+        for i, f in enumerate(TEST_RESULTS, 1):
+            print(f"  Trial {i}: {f:.2f} N")
+        print(f"Average max force: {statistics.mean(TEST_RESULTS):.2f} N")
 
 if __name__ == "__main__":
     main()
