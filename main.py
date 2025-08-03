@@ -31,7 +31,7 @@ from textual.containers import Container
 
 G = 9.80665  # m/s²
 CAL_FILE = "calibration.json"
-CAL_WEIGHTS = [0.0, 8.0, 16.0, 31.6]  # kg
+CAL_WEIGHTS = [0.0, 7.9, 15.9, 31.4]  # kg
 SAMPLE_INTERVAL = 0.01  # 100 Hz
 DROP_DURATION = 10.0  # seconds below threshold to end trial
 SPARK_BLOCKS = "▁▂▃▄▅▆▇█"
