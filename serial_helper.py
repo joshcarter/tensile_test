@@ -21,6 +21,8 @@ class SerialMovingAverageReader:
         if not os.path.exists(port):
             port = "/dev/cu.usbmodem1103"
         if not os.path.exists(port):
+            port = "/dev/serial1"
+        if not os.path.exists(port):
             print(f"Error: Serial port cannot be determined; specify with --port")
             sys.exit(1)
 
