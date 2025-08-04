@@ -48,9 +48,8 @@ class CalibrateApp(App):
     CSS_PATH = None
     BINDINGS = [("enter", "proceed", "Next")]
 
-    def __init__(self, port: str):
+    def __init__(self):
         super().__init__()
-        self.port = port
         self.reader = None
 
         self.data = deque()  # (t, raw)
@@ -184,15 +183,17 @@ class TestApp(App):
     """TUI for running tensile trials."""
     CSS_PATH = None
 
-    def __init__(self, port, mat_type, manufacturer, color, axis, trials, threshold):
+    def __init__(self):
         super().__init__()
-        self.port = port
-        self.type = mat_type
-        self.manufacturer = manufacturer
-        self.color = color
-        self.axis = axis
-        self.trials = trials
-        self.threshold = threshold
+        self.type = None
+        self.manufacturer = None
+        self.color = None
+        self.axis = None
+        self.trials = None
+        self.threshold = None
+        self.extrusion_width = None
+        self.layer_height = None
+        self.printer = None
 
         self.reader = None
         self.offset = None
@@ -317,6 +318,9 @@ class TestApp(App):
             f.write(f"Axis: {self.axis}\n")
             f.write(f"Trials: {self.trials}\n")
             f.write(f"Threshold: {self.threshold} N\n")
+            f.write(f"Extrusion width: {self.extrusion_width} mm\n")
+            f.write(f"Layer height: {self.layer_height} mm\n")
+            f.write(f"Printer: {self.printer}\n")
             f.write("Results:\n")
             for i, res in enumerate(self.results, 1):
                 f.write(f"  Trial {i}: {res:.2f} N\n")
@@ -331,7 +335,11 @@ class TestApp(App):
 
         # Read existing data
         rows = []
-        fieldnames = ["brand", "material type", "color", "xy strength (Mpa)", "z strength (Mpa)"]
+        fieldnames = [
+            "brand", "material type", "color",
+            "extrusion width", "layer height", "printer",
+            "xy strength (Mpa)", "z strength (Mpa)"
+        ]
         if os.path.exists(csv_path) and os.stat(csv_path).st_size > 0:
             with open(csv_path, newline="") as csv_file:
                 reader = csv.DictReader(csv_file)
@@ -351,6 +359,9 @@ class TestApp(App):
                     row["xy strength (Mpa)"] = xy_val
                 else:
                     row["z strength (Mpa)"] = z_val
+                row["extrusion width"] = str(self.extrusion_width)
+                row["layer height"] = str(self.layer_height)
+                row["printer"] = self.printer
                 found = True
                 break
 
@@ -360,6 +371,9 @@ class TestApp(App):
                 "brand": self.manufacturer,
                 "material type": self.type,
                 "color": self.color,
+                "extrusion width": str(self.extrusion_width),
+                "layer height": str(self.layer_height),
+                "printer": self.printer,
                 "xy strength (Mpa)": xy_val,
                 "z strength (Mpa)": z_val
             })
@@ -378,37 +392,55 @@ class TestApp(App):
 
 
 def main():
+    # Load configuration overrides from configuration.json
+    config = {}
+    config_path = "configuration.json"
+    if os.path.exists(config_path):
+        with open(config_path) as cf:
+            config = json.load(cf)
+
     p = argparse.ArgumentParser()
     subs = p.add_subparsers(dest="cmd", required=True)
 
     c = subs.add_parser("calibrate")
-    c.add_argument("--port", "-p", required=False, default=None)
+    c.add_argument("--port", "-p", required=False, default=config.get("port", None))
     c.set_defaults(mode="calibrate")
 
     t = subs.add_parser("test")
-    t.add_argument("--port", "-p", required=False, default=None)
+    t.add_argument("--port", "-p", required=False, default=config.get("port", None))
     t.add_argument("--type", "-t", required=True)
     t.add_argument("--manufacturer", "-m", required=True)
     t.add_argument("--color", "-c", required=True)
     t.add_argument("--axis", "-a", choices=("xy", "z"), required=True)
-    t.add_argument("--trials", type=int, default=5)
-    t.add_argument("--threshold", type=float, default=50.0)
+    t.add_argument("--trials", type=int, default=config.get("trials", 5))
+    t.add_argument("--threshold", type=float, default=config.get("threshold", 50.0))
+    t.add_argument("--extrusion-width", type=float, help="Extrusion width in mm", default=config.get("extrusion_width", 0.4)),
+    t.add_argument("--layer-height", type=float, help="Layer height in mm", default=config.get("layer_height", 0.2)),
+    t.add_argument("--printer", help="Printer model or name", default=config.get("printer", ""))
     t.set_defaults(mode="test")
 
     args = p.parse_args()
 
+    # Open port before starting the TUI so that any error messages will print.
+    reader = SerialMovingAverageReader(args.port)
+
     if args.mode == "calibrate":
-        CalibrateApp(args.port).run()
+        app = CalibrateApp()
+        app.reader = reader
+        app.run()
     else:
-        TestApp(
-            args.port,
-            args.type,
-            args.manufacturer,
-            args.color,
-            args.axis,
-            args.trials,
-            args.threshold,
-        ).run()
+        app = TestApp()
+        app.reader = args.reader
+        app.type = args.type
+        app.manufacturer = args.manufacturer
+        app.color = args.color
+        app.axis = args.axis
+        app.trials = args.trials
+        app.threshold = args.threshold
+        app.extrusion_width = args.extrusion_width
+        app.layer_height = args.layer_height
+        app.printer = args.printer
+        app.run()
 
         # need to print this after the TUI exits
         print("\n=== TEST SUMMARY ===")
