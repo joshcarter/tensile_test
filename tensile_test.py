@@ -430,7 +430,7 @@ def main():
         app.run()
     else:
         app = TestApp()
-        app.reader = args.reader
+        app.reader = reader
         app.type = args.type
         app.manufacturer = args.manufacturer
         app.color = args.color
