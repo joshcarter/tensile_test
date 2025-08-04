@@ -67,7 +67,6 @@ class CalibrateApp(App):
 
     async def on_mount(self):
         # connect & start polling
-        self.reader = SerialMovingAverageReader(self.port)
         self.start_stage()
 
         # periodic updates
@@ -216,9 +215,6 @@ class TestApp(App):
         # load calibration
         cal = json.load(open(CAL_FILE))
         self.offset, self.slope = cal["offset"], cal["slope"]
-
-        # serial
-        self.reader = SerialMovingAverageReader(self.port)
 
         # start polling
         self.set_interval(SAMPLE_INTERVAL, self.update_reading)
