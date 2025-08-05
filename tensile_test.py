@@ -40,8 +40,8 @@ XY_AXIS_AREA = 20  # mm^2 cross-sectional area for the XY axis test
 Z_AXIS_AREA = 30  # mm^2 cross-sectional area for the Z axis test
 
 TEST_RESULTS = []  # will hold max forces per trial
-TEST_RESULT_FORCE = None  # will hold the final average force
-TEST_RESULT_STRENGTH = None  # will hold the final average strength
+TEST_RESULT_FORCE = 0.0  # will hold the final average force
+TEST_RESULT_STRENGTH = 0.0  # will hold the final average strength
 
 class CalibrateApp(App):
     """TUI for calibration."""
@@ -228,10 +228,11 @@ class TestApp(App):
         self.query_one("#footer", Static).update("below threshold…")
 
     def update_reading(self):
-        sample = self.reader.read_smoothed()
         now = time.monotonic()
         # convert to N
+        sample = self.reader.read_smoothed()
         F = (sample - self.offset) / self.slope
+
         # update header
         hdr = self.query_one("#header", Static)
         hdr.update(

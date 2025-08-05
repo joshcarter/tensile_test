@@ -28,20 +28,37 @@ class SerialMovingAverageReader:
 
         self.ser = serial.Serial(port, baud, timeout=timeout)
         self.buffer = deque(maxlen=window_size)
+        # Open error log file for logging invalid reads
+        self.log_file = open("serial_errors.log", "a")
 
     def reset(self):
         """Reset the serial buffer."""
         self.buffer.clear()
         self.ser.reset_input_buffer()
 
+    def _log_error(self, message):
+        """Log error message with timestamp to log file."""
+        from datetime import datetime
+        timestamp = datetime.now().isoformat()
+        self.log_file.write(f"{timestamp} - {message}\n")
+        self.log_file.flush()
+
     def read_raw(self):
-        """Read one raw float from the serial port (or return None)."""
-        line = self.ser.readline().decode(errors="ignore").strip()
-        if not line:
+        """Read one raw float from the serial port (or log error and return None)."""
+        try:
+            line = self.ser.readline().decode(errors="ignore").strip()
+        except Exception as e:
+            self._log_error(f"Error reading line: {e}")
             return None
+
+        if not line:
+            self._log_error("Empty line received")
+            return None
+
         try:
             return float(line)
-        except ValueError:
+        except ValueError as e:
+            self._log_error(f"ValueError parsing float from line: {line} - {e}")
             return None
 
     def read_smoothed(self):
@@ -49,14 +66,12 @@ class SerialMovingAverageReader:
         Read raw data, push it into the circular buffer,
         and return the average of whatever's in the buffer.
         """
-        # make sure averager is always full
+        # Continue reading until buffer is full and one new valid sample is added
         while True:
             raw = self.read_raw()
             if raw is None:
-                return None
-
+                continue  # skip invalid readings
             self.buffer.append(raw)
-
             if len(self.buffer) == self.buffer.maxlen:
                 break
 
@@ -66,6 +81,8 @@ class SerialMovingAverageReader:
         """Cleanly close the serial port."""
         if self.ser and self.ser.is_open:
             self.ser.close()
+        if hasattr(self, 'log_file'):
+            self.log_file.close()
 
 
 def test_serial():

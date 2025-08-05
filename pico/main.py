@@ -3,6 +3,10 @@ import board
 import digitalio
 import usb_cdc
 
+last_reading = 0
+MAX_CODE = 0x7FFFFF
+MIN_CODE = -0x800000
+
 class HX711:
     def __init__(self, dout, pd_sck):
         self.pSCK = digitalio.DigitalInOut(pd_sck)
@@ -47,7 +51,20 @@ serial = usb_cdc.data
 serial.timeout = 0
 
 while True:
-    reading = hx.read()
-    # print(f"{reading}\n".encode("utf-8"))
-    serial.write(f"{reading}\n".encode("utf-8"))
-    time.sleep(0.01)
+    try:
+        # Raw 24-bit signed code from HX711
+        raw = hx.read()
+        # Clamp codes that exceed full-scale
+        if raw > MAX_CODE:
+            raw = MAX_CODE
+        elif raw < MIN_CODE:
+            raw = MIN_CODE
+        reading = int(raw)
+        last_reading = reading
+    except Exception as e:
+        # On any read or clamp error, log and reuse last valid reading
+        reading = last_reading
+
+    # Send a guaranteed float value over serial
+    serial.write(str(reading) + "\n")
+    time.sleep(0.001)
