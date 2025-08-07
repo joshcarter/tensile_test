@@ -2,6 +2,7 @@ import time
 import board
 import digitalio
 import usb_cdc
+import json
 
 last_reading = 0
 MAX_CODE = 0x7FFFFF
@@ -41,7 +42,14 @@ class HX711:
         if result & 0x800000:
             result -= 0x1000000
 
-        return result
+        # Clamp codes that exceed full-scale
+        if reading > MAX_CODE:
+            return MAX_CODE
+        elif reading < MIN_CODE:
+            return MIN_CODE
+        else:
+            return result
+
 
 # 🧪 Set up pins
 hx = HX711(board.GP0, board.GP1)
@@ -50,21 +58,33 @@ hx = HX711(board.GP0, board.GP1)
 serial = usb_cdc.data
 serial.timeout = 0
 
+# ——— Try Load Calibration ———
+use_newtons = False
+offset = 0
+slope = 1
+try:
+    with open("calibration.json", "r") as f:
+        cal = json.load(f)
+        offset = float(cal["offset"])
+        slope  = float(cal["slope"])
+        use_newtons = True
+except Exception:
+    # no file or parse error → stick to raw counts
+    use_newtons = False
+
+
 while True:
     try:
-        # Raw 24-bit signed code from HX711
-        raw = hx.read()
-        # Clamp codes that exceed full-scale
-        if raw > MAX_CODE:
-            raw = MAX_CODE
-        elif raw < MIN_CODE:
-            raw = MIN_CODE
-        reading = int(raw)
-        last_reading = reading
-    except Exception as e:
-        # On any read or clamp error, log and reuse last valid reading
-        reading = last_reading
+        reading = hx.read()
 
-    # Send a guaranteed float value over serial
-    serial.write(str(reading) + "\n")
+        if use_newtons:
+            # convert to Newtons and tag with "N"
+            N = (reading - offset) / slope
+            serial.write(f"{N:.3f}N\n".encode("utf-8"))
+        else:
+            # emit raw counts for calibration
+            serial.write(f"{reading}\n".encode("utf-8"))
+    except Exception as e:
+        pass
+
     time.sleep(0.001)
