@@ -95,18 +95,17 @@ while True:
         reading = hx.read(timeout_ms=50)
 
         if reading is not None:
-            # Check if USB buffer has space
-            if serial.out_waiting < 32:
-                if use_newtons:
-                    N = (reading - offset) / slope
-                    serial.write(f"{N:.3f}N\n".encode("utf-8"))
-                else:
-                    serial.write(f"{reading}\n".encode("utf-8"))
-                last_send_time = now
-                error_count = 0
+            if use_newtons:
+                N = (reading - offset) / slope
+                serial.write(f"{N:.3f}N\n".encode("utf-8"))
+            else:
+                serial.write(f"{reading}\n".encode("utf-8"))
+            last_send_time = now
+            error_count = 0
         else:
             error_count += 1
             if error_count > 10:
+                print("reseting hx711")
                 # Too many errors, reset HX711
                 hx.reset()
                 error_count = 0
