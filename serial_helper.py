@@ -106,12 +106,6 @@ class SerialMovingAverageReader:
             self._log_error(f"ValueError parsing Newton value from line: {line} - {e}")
             return None
 
-    def read_raw(self):
-        """
-        Legacy method for backward compatibility.
-        Reads raw counts for calibration mode.
-        """
-        return self.read_raw_counts()
 
     def read_smoothed_counts(self):
         """
@@ -143,12 +137,6 @@ class SerialMovingAverageReader:
 
         return sum(self.buffer) / len(self.buffer)
 
-    def read_smoothed(self):
-        """
-        Legacy method for backward compatibility.
-        Defaults to reading Newton values.
-        """
-        return self.read_smoothed_newtons()
 
     def close(self):
         """Cleanly close the serial port."""
