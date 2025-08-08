@@ -4,17 +4,15 @@ Calibration TUI application for the tensile tester.
 
 import os
 import sys
-import time
 import json
 import statistics
-from collections import deque
 
 from textual.app import App, ComposeResult
 from textual.widgets import Static
 from rich.panel import Panel
 
 from utils import (
-    CAL_FILE, CAL_WEIGHTS, G, SAMPLE_INTERVAL, SPARK_DURATION, make_sparkline
+    CAL_FILE, CAL_WEIGHTS, G, SAMPLE_INTERVAL, SparklineGraph
 )
 
 
@@ -27,7 +25,7 @@ class CalibrateApp(App):
         super().__init__()
         self.reader = None
 
-        self.data = deque()  # (t, raw)
+        self.graph = SparklineGraph()
         self.stage = 0  # index into CAL_WEIGHTS
         self.stage_samples = []  # raw readings for current stage
         self.collecting = False
@@ -53,7 +51,7 @@ class CalibrateApp(App):
         w = CAL_WEIGHTS[self.stage]
         self.collecting = False
         self.stage_samples.clear()
-        self.data.clear()
+        self.graph.reset()
         self.reader.reset()
         self.query_one("#header", Static).update(
             f"[b]MODE:[/] calibrate    [b]PLACE[/] {w} kg, then ⏎"
@@ -136,12 +134,9 @@ class CalibrateApp(App):
         if sample is None:
             return
 
-        t = time.monotonic()
-        # store for sparkline
-        self.data.append((t, sample))
-        # trim older than 5 s
-        while self.data and (t - self.data[0][0]) > SPARK_DURATION:
-            self.data.popleft()
+        # Add to graph for sparkline
+        self.graph.add_value(sample)
+        
         # if collecting stage samples
         if self.collecting:
             self.stage_samples.append(sample)
@@ -150,7 +145,8 @@ class CalibrateApp(App):
             )
 
     def update_plot(self):
-        """Re-render the 5 s sparkline of raw data."""
-        arr = [r for _, r in self.data]
-        plot = make_sparkline(arr)
-        self.query_one("#plot", Static).update(Panel(plot, title="raw counts"))
+        """Re-render the sparkline of raw data."""
+        plot_widget = self.query_one("#plot", Static)
+        panel_width = plot_widget.size.width
+        plot = self.graph.render(panel_width)
+        plot_widget.update(Panel(plot, title="raw counts"))

@@ -8,15 +8,14 @@ import csv
 import statistics
 import io
 import zipfile
-from collections import deque
 
 from textual.app import App, ComposeResult
 from textual.widgets import Static
 from rich.panel import Panel
 
 from utils import (
-    SAMPLE_INTERVAL, SPARK_DURATION, DROP_DURATION, 
-    XY_AXIS_AREA, Z_AXIS_AREA, make_sparkline
+    SAMPLE_INTERVAL, DROP_DURATION, 
+    XY_AXIS_AREA, Z_AXIS_AREA, SparklineGraph
 )
 
 
@@ -41,10 +40,11 @@ class TestApp(App):
         self.extrusion_width = None
         self.layer_height = None
         self.printer = None
+        self.cross_section = None  # will be set to XY_AXIS_AREA, Z_AXIS_AREA, or CLI arg
 
         self.reader = None
 
-        self.data = deque()  # (t, F) - no more raw values
+        self.graph = SparklineGraph()
         self.state = "waiting"  # waiting -> measuring -> done
         self.trial_idx = 1
         self.trial_start = None
@@ -58,7 +58,11 @@ class TestApp(App):
         yield Static("", id="footer")
 
     async def on_mount(self):
-        # No longer need to load calibration - Pico handles it
+        if self.cross_section is None:
+            if self.axis == "z":
+                self.cross_section = Z_AXIS_AREA
+            else:
+                self.cross_section = XY_AXIS_AREA
 
         # start polling
         self.set_interval(SAMPLE_INTERVAL, self.update_reading)
@@ -92,10 +96,8 @@ class TestApp(App):
             f"[b]TRIAL:[/] {self.trial_idx}/{self.trials}    "
         )
 
-        # keep 5 s plot buffer (no more raw values)
-        self.data.append((now, F))
-        while self.data and (now - self.data[0][0]) > SPARK_DURATION:
-            self.data.popleft()
+        # Add to graph for sparkline
+        self.graph.add_value(F)
 
         # state machine
         if self.state == "waiting":
@@ -140,11 +142,7 @@ class TestApp(App):
         if self.trial_idx > self.trials:
             # auto-quit when all trials are done
             TEST_RESULT_FORCE = statistics.mean(self.results)
-
-            if self.axis == "z":
-                TEST_RESULT_STRENGTH = TEST_RESULT_FORCE / Z_AXIS_AREA
-            else:
-                TEST_RESULT_STRENGTH = TEST_RESULT_FORCE / XY_AXIS_AREA
+            TEST_RESULT_STRENGTH = TEST_RESULT_FORCE / self.cross_section
 
             self.log_summary(dname)
             self.update_master_summary()
@@ -154,7 +152,7 @@ class TestApp(App):
             # next trial
             self.state = "waiting"
             self.query_one("#footer", Static).update("below threshold…")
-            self.data.clear()
+            self.graph.reset()
             self.reader.reset()
 
     def log_summary(self, dname):
@@ -166,6 +164,7 @@ class TestApp(App):
             f.write(f"Material Type: {self.type}\n")
             f.write(f"Color: {self.color}\n")
             f.write(f"Axis: {self.axis}\n")
+            f.write(f"Cross-section area: {self.cross_section} mm²\n")
             f.write(f"Trials: {self.trials}\n")
             f.write(f"Threshold: {self.threshold} N\n")
             f.write(f"Extrusion width: {self.extrusion_width} mm\n")
@@ -235,7 +234,8 @@ class TestApp(App):
             writer.writerows(rows)
 
     def update_plot(self):
-        """Re-render 5 s sparkline of force in N."""
-        arr = [F for _, F in self.data]
-        plot = make_sparkline(arr)
-        self.query_one("#plot", Static).update(Panel(plot, title="force [N]"))
+        """Re-render sparkline of force in N."""
+        plot_widget = self.query_one("#plot", Static)
+        panel_width = plot_widget.size.width
+        plot = self.graph.render(panel_width)
+        plot_widget.update(Panel(plot, title="force [N]"))
