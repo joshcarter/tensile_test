@@ -148,7 +148,15 @@ class CalibrateApp(App):
 
     def update_reading(self):
         """Read one raw sample + timestamp; append to buffers."""
-        sample = self.reader.read_raw()  # Use the raw readings as we're going to average anyway.
+        try:
+            # Use the explicit raw counts method for calibration
+            sample = self.reader.read_raw_counts()
+        except ValueError as e:
+            # Pico has calibration when it shouldn't - show error and exit
+            self.query_one("#footer", Static).update(str(e))
+            self.reader.close()
+            self.exit(return_code=1)
+            return
 
         if sample is None:
             return
@@ -165,7 +173,6 @@ class CalibrateApp(App):
             self.query_one("#header", Static).update(
                 f"[b]MODE:[/] calibrate    [b]RAW:[/] {sample:.0f}"
             )
-
     def update_plot(self):
         """Re-render the 5 s sparkline of raw data."""
         arr = [r for _, r in self.data]
@@ -202,10 +209,8 @@ class TestApp(App):
         self.printer = None
 
         self.reader = None
-        self.offset = None
-        self.slope = None
 
-        self.data = deque()  # (t, raw, F)
+        self.data = deque()  # (t, F) - no more raw values
         self.state = "waiting"  # waiting -> measuring -> done
         self.trial_idx = 1
         self.trial_start = None
@@ -219,9 +224,7 @@ class TestApp(App):
         yield Static("", id="footer")
 
     async def on_mount(self):
-        # load calibration
-        cal = json.load(open(CAL_FILE))
-        self.offset, self.slope = cal["offset"], cal["slope"]
+        # No longer need to load calibration - Pico handles it
 
         # start polling
         self.set_interval(SAMPLE_INTERVAL, self.update_reading)
@@ -229,26 +232,34 @@ class TestApp(App):
 
         # initialize UI
         self.query_one("#header", Static).update(
-            f"[b]MODE:[/] test    [b]RAW:[/] –    [b]N:[/] –    "
+            f"[b]MODE:[/] test    [b]N:[/] –    "
             f"[b]TYPE:[/] {self.type}    [b]AXIS:[/] {self.axis}    "
         )
         self.query_one("#footer", Static).update("below threshold…")
 
     def update_reading(self):
         now = time.monotonic()
-        # convert to N
-        sample = self.reader.read_smoothed()
-        F = (sample - self.offset) / self.slope
 
-        # update header
+        # Read Newton values directly from Pico
+        try:
+            F = self.reader.read_smoothed_newtons()
+        except ValueError as e:
+            # Pico is not calibrated - show error and exit
+            self.query_one("#footer", Static).update(str(e))
+            self.reader.close()
+            self.exit(return_code=1)
+            return
+
+        # update header (no more raw values)
         hdr = self.query_one("#header", Static)
         hdr.update(
-            f"[b]MODE:[/] test    [b]RAW:[/] {sample:.0f}    [b]N:[/] {F:.1f}    "
+            f"[b]MODE:[/] test    [b]N:[/] {F:.1f}    "
             f"[b]TYPE:[/] {self.type}    [b]AXIS:[/] {self.axis}    "
             f"[b]TRIAL:[/] {self.trial_idx}/{self.trials}    "
         )
-        # keep 5 s plot buffer
-        self.data.append((now, sample, F))
+
+        # keep 5 s plot buffer (no more raw values)
+        self.data.append((now, F))
         while self.data and (now - self.data[0][0]) > SPARK_DURATION:
             self.data.popleft()
 
@@ -356,8 +367,8 @@ class TestApp(App):
         found = False
         for row in rows:
             if (row["brand"] == self.manufacturer and
-                row["material type"] == self.type and
-                row["color"] == self.color):
+                    row["material type"] == self.type and
+                    row["color"] == self.color):
                 # Update the proper column
                 if self.axis == "xy":
                     row["xy strength (Mpa)"] = xy_val
@@ -390,7 +401,7 @@ class TestApp(App):
 
     def update_plot(self):
         """Re-render 5 s sparkline of force in N."""
-        arr = [F for _, _, F in self.data]
+        arr = [F for _, F in self.data]  # Changed from (_, _, F) to (_, F)
         plot = CalibrateApp.make_sparkline(arr)
         self.query_one("#plot", Static).update(Panel(plot, title="force [N]"))
 

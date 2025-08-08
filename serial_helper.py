@@ -5,8 +5,8 @@ import os, sys
 
 class SerialMovingAverageReader:
     """
-    A helper class to read a stream of floats from a serial port and return a smoothed average of those readings.
-    For use with a XH711 load cell amp (running at 80Hz) connected to a Raspberry Pi Pico or similar microcontroller.
+    A helper class to read a stream of values from a serial port and return a smoothed average.
+    Can handle both raw counts (integers) and Newton values (floats with 'N' suffix).
     """
 
     def __init__(self, port, baud=115200, timeout=0.1, window_size=3):
@@ -43,32 +43,83 @@ class SerialMovingAverageReader:
         self.log_file.write(f"{timestamp} - {message}\n")
         self.log_file.flush()
 
-    def read_raw(self):
-        """Read one raw float from the serial port (or log error and return None)."""
+    def _read_line(self):
+        """Read one line from the serial port."""
         try:
             line = self.ser.readline().decode(errors="ignore").strip()
+            return line
         except Exception as e:
             self._log_error(f"Error reading line: {e}")
             return None
 
+    def read_raw_counts(self):
+        """
+        Read one raw count value from the serial port.
+        Expects integer values with no suffix.
+        Raises ValueError if Newton values are detected.
+        """
+        line = self._read_line()
         if not line:
             self._log_error("Empty line received")
             return None
 
+        # Check if this is a Newton value (has 'N' suffix)
+        if line.endswith('N'):
+            raise ValueError(
+                "ERROR: Pico is sending calibrated Newton values when raw counts are expected. "
+                "The Pico should not have a calibration.json file during calibration mode."
+            )
+
         try:
-            return float(line)
-        except ValueError as e:
-            self._log_error(f"ValueError parsing float from line: {line} - {e}")
+            # Try to parse as integer first (expected format)
+            return float(int(line))
+        except ValueError:
+            try:
+                # Fall back to float if it's a decimal raw value
+                return float(line)
+            except ValueError as e:
+                self._log_error(f"ValueError parsing raw count from line: {line} - {e}")
+                return None
+
+    def read_newtons(self):
+        """
+        Read one Newton value from the serial port.
+        Expects float values with 'N' suffix.
+        Raises ValueError if raw counts are detected.
+        """
+        line = self._read_line()
+        if not line:
+            self._log_error("Empty line received")
             return None
 
-    def read_smoothed(self):
+        # Check if this has the Newton suffix
+        if not line.endswith('N'):
+            raise ValueError(
+                "ERROR: Pico is sending raw counts when calibrated Newton values are expected. "
+                "Please upload calibration.json to the Pico to enable Newton output."
+            )
+
+        # Strip the 'N' suffix and parse the float
+        try:
+            return float(line[:-1])
+        except ValueError as e:
+            self._log_error(f"ValueError parsing Newton value from line: {line} - {e}")
+            return None
+
+    def read_raw(self):
         """
-        Read raw data, push it into the circular buffer,
-        and return the average of whatever's in the buffer.
+        Legacy method for backward compatibility.
+        Reads raw counts for calibration mode.
         """
-        # Continue reading until buffer is full and one new valid sample is added
+        return self.read_raw_counts()
+
+    def read_smoothed_counts(self):
+        """
+        Read raw counts, push into buffer, and return smoothed average.
+        For use during calibration.
+        """
         while True:
-            raw = self.read_raw()
+            raw = self.read_raw_counts()
             if raw is None:
                 continue  # skip invalid readings
             self.buffer.append(raw)
@@ -76,6 +127,28 @@ class SerialMovingAverageReader:
                 break
 
         return sum(self.buffer) / len(self.buffer)
+
+    def read_smoothed_newtons(self):
+        """
+        Read Newton values, push into buffer, and return smoothed average.
+        For use during testing.
+        """
+        while True:
+            newtons = self.read_newtons()
+            if newtons is None:
+                continue  # skip invalid readings
+            self.buffer.append(newtons)
+            if len(self.buffer) == self.buffer.maxlen:
+                break
+
+        return sum(self.buffer) / len(self.buffer)
+
+    def read_smoothed(self):
+        """
+        Legacy method for backward compatibility.
+        Defaults to reading Newton values.
+        """
+        return self.read_smoothed_newtons()
 
     def close(self):
         """Cleanly close the serial port."""
@@ -88,9 +161,14 @@ class SerialMovingAverageReader:
 def test_serial():
     s = SerialMovingAverageReader(port=None, window_size=5)
     try:
+        print("Testing Newton value reading (expecting values with 'N' suffix)...")
         while True:
-            avg = s.read_smoothed()
-            print(f"Average: {avg:.2f}")
+            try:
+                avg = s.read_smoothed_newtons()
+                print(f"Average force: {avg:.2f} N")
+            except ValueError as e:
+                print(f"Configuration error: {e}")
+                sys.exit(1)
     except KeyboardInterrupt:
         print("Exiting...")
     finally:
