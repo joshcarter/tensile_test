@@ -43,9 +43,9 @@ class HX711:
             result -= 0x1000000
 
         # Clamp codes that exceed full-scale
-        if reading > MAX_CODE:
+        if result > MAX_CODE:
             return MAX_CODE
-        elif reading < MIN_CODE:
+        elif result < MIN_CODE:
             return MIN_CODE
         else:
             return result
@@ -85,6 +85,7 @@ while True:
             # emit raw counts for calibration
             serial.write(f"{reading}\n".encode("utf-8"))
     except Exception as e:
+        print(f"Error reading HX711: {e}")
         pass
 
     time.sleep(0.001)
