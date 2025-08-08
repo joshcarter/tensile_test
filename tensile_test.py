@@ -149,6 +149,10 @@ class CalibrateApp(App):
     def update_reading(self):
         """Read one raw sample + timestamp; append to buffers."""
         sample = self.reader.read_raw()  # Use the raw readings as we're going to average anyway.
+
+        if sample is None:
+            return
+
         t = time.monotonic()
         # store for sparkline
         self.data.append((t, sample))
@@ -158,6 +162,9 @@ class CalibrateApp(App):
         # if collecting stage samples
         if self.collecting:
             self.stage_samples.append(sample)
+            self.query_one("#header", Static).update(
+                f"[b]MODE:[/] calibrate    [b]RAW:[/] {sample:.0f}"
+            )
 
     def update_plot(self):
         """Re-render the 5 s sparkline of raw data."""
