@@ -1,0 +1,40 @@
+=== Test Summary ===
+Manufacturer: eSun
+Material Type: PLA-CF
+Color: FDE
+Axis: xy
+Trials: 5
+Threshold: 50.0 N
+Extrusion width: 0.4 mm
+Layer height: 0.16 mm
+Printer: Prusa Mk3
+Results:
+  Trial 1: 1184.61 N
+  Trial 2: 1217.53 N
+  Trial 3: 1223.97 N
+  Trial 4: 1092.38 N
+  Trial 5: 1229.23 N
+Average max force: 1189.54 N
+Tensile strength: 59.48 MPa
+
+
+=== Test Summary ===
+Manufacturer: eSun
+Material Type: PLA-CF
+Color: FDE
+Axis: z
+Trials: 5
+Threshold: 50.0 N
+Extrusion width: 0.4 mm
+Layer height: 0.16 mm
+Printer: Prusa Mk3
+Results:
+  Trial 1: 714.31 N
+  Trial 2: 675.55 N
+  Trial 3: 673.70 N
+  Trial 4: 669.57 N
+  Trial 5: 658.46 N
+Average max force: 678.32 N
+Tensile strength: 22.61 MPa
+
+

@@ -1,20 +1,42 @@
-∴ python main.py test --type PET-GF --manufacturer SirayaTech --axis xy --trials 5
+=== Test Summary ===
+Manufacturer: Siraya Tech
+Material Type: PET-GF
+Color: FDE
+Axis: xy
+Cross-section area: 20 mm²
+Trials: 5
+Threshold: 50.0 N
+Extrusion width: 0.4 mm
+Layer height: 0.16 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 1118.20 N
+  Trial 2: 1068.70 N
+  Trial 3: 1273.19 N
+  Trial 4: 1314.86 N
+  Trial 5: 1305.72 N
+Average max force: 1216.13 N
+Tensile strength: 60.81 MPa
 
-=== TEST SUMMARY ===
-  Trial 1: 1220.98 N
-  Trial 2: 1175.54 N
-  Trial 3: 1185.58 N
-  Trial 4: 1179.69 N
-  Trial 5: 1047.57 N
-Average max force: 1161.87 N
 
-󰀵 josh  …/loadcell   main !?   v3.13.5   15:38 
-∴ python main.py test --type PET-GF --manufacturer SirayaTech --axis z --trials 5
+=== Test Summary ===
+Manufacturer: Siraya Tech
+Material Type: PET-GF
+Color: FDE
+Axis: z
+Cross-section area: 30 mm²
+Trials: 5
+Threshold: 50.0 N
+Extrusion width: 0.4 mm
+Layer height: 0.16 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 513.46 N
+  Trial 2: 625.46 N
+  Trial 3: 627.50 N
+  Trial 4: 579.55 N
+  Trial 5: 539.55 N
+Average max force: 577.10 N
+Tensile strength: 19.24 MPa
 
-=== TEST SUMMARY ===
-  Trial 1: 544.06 N
-  Trial 2: 489.03 N
-  Trial 3: 425.74 N
-  Trial 4: 605.12 N
-  Trial 5: 531.24 N
-Average max force: 519.04 N
+

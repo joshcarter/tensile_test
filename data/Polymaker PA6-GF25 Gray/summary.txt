@@ -11,10 +11,30 @@ Printer: Voron 2.4
 Results:
   Trial 1: 2160.11 N
   Trial 2: 2103.00 N
-  Trial 3: 153.81 N
-  Trial 4: 105.78 N
-  Trial 5: 157.26 N
-Average max force: 935.99 N
-Tensile strength: 46.80 MPa
+  Trial 3: 2430.53 N
+  Trial 4: 2215.17 N
+Average max force: 2227.20 N
+Tensile strength: 111.36 MPa
+
+
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PA6-GF25
+Color: Gray
+Axis: z
+Cross-section area: 30 mm²
+Trials: 5
+Threshold: 50.0 N
+Extrusion width: 0.4 mm
+Layer height: 0.16 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 1295.78 N
+  Trial 2: 1245.19 N
+  Trial 3: 1013.42 N
+  Trial 4: 1217.03 N
+  Trial 5: 858.18 N
+Average max force: 1125.92 N
+Tensile strength: 37.53 MPa
 
 
