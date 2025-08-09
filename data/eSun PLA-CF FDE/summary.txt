@@ -2,39 +2,41 @@
 Manufacturer: eSun
 Material Type: PLA-CF
 Color: FDE
-Axis: xy
+Axis: z
+Cross-section area: 50.0 mm²
 Trials: 5
 Threshold: 50.0 N
 Extrusion width: 0.4 mm
 Layer height: 0.16 mm
-Printer: Prusa Mk3
+Printer: Voron 2.4
 Results:
-  Trial 1: 1184.61 N
-  Trial 2: 1217.53 N
-  Trial 3: 1223.97 N
-  Trial 4: 1092.38 N
-  Trial 5: 1229.23 N
-Average max force: 1189.54 N
-Tensile strength: 59.48 MPa
+  Trial 1: 1208.51 N
+  Trial 2: 1303.43 N
+  Trial 3: 1248.32 N
+  Trial 4: 1289.55 N
+  Trial 5: 1205.27 N
+Average max force: 1251.02 N
+Tensile strength: 25.02 MPa
 
 
 === Test Summary ===
 Manufacturer: eSun
 Material Type: PLA-CF
 Color: FDE
-Axis: z
+Axis: xy
+Cross-section area: 30.0 mm²
 Trials: 5
 Threshold: 50.0 N
 Extrusion width: 0.4 mm
 Layer height: 0.16 mm
-Printer: Prusa Mk3
+Printer: Voron 2.4
 Results:
-  Trial 1: 714.31 N
-  Trial 2: 675.55 N
-  Trial 3: 673.70 N
-  Trial 4: 669.57 N
-  Trial 5: 658.46 N
-Average max force: 678.32 N
-Tensile strength: 22.61 MPa
+  Trial 1: 1525.97 N
+  Trial 2: 1583.71 N
+  Trial 3: 1565.87 N
+  Trial 4: 1570.52 N
+  Trial 5: 1678.50 N
+Average max force: 1584.92 N
+Tensile strength: 52.83 MPa
 
 
