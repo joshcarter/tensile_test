@@ -23,7 +23,7 @@ import os
 
 from serial_helper import SerialMovingAverageReader
 from calibrate_app import CalibrateApp
-from test_app import TestApp, TEST_RESULTS, TEST_RESULT_FORCE, TEST_RESULT_STRENGTH
+import test_app
 
 
 def main():
@@ -65,7 +65,7 @@ def main():
         app.reader = reader
         app.run()
     else:
-        app = TestApp()
+        app = test_app.TestApp()
         app.reader = reader
         app.type = args.type
         app.manufacturer = args.manufacturer
@@ -81,10 +81,10 @@ def main():
 
         # need to print this after the TUI exits
         print("\n=== TEST SUMMARY ===")
-        for i, res in enumerate(TEST_RESULTS, 1):
+        for i, res in enumerate(test_app.TEST_RESULTS, 1):
             print(f"  Trial {i}: {res:.2f} N")
-        print(f"Average max force: {TEST_RESULT_FORCE:.2f} N")
-        print(f"Tensile strength: {TEST_RESULT_STRENGTH:.2f} MPa")
+        print(f"Average max force: {test_app.TEST_RESULT_FORCE:.2f} N")
+        print(f"Tensile strength: {test_app.TEST_RESULT_STRENGTH:.2f} MPa")
 
 
 if __name__ == "__main__":

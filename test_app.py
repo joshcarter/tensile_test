@@ -141,6 +141,7 @@ class TestApp(App):
 
         if self.trial_idx > self.trials:
             # auto-quit when all trials are done
+            global TEST_RESULT_FORCE, TEST_RESULT_STRENGTH
             TEST_RESULT_FORCE = statistics.mean(self.results)
             TEST_RESULT_STRENGTH = TEST_RESULT_FORCE / self.cross_section
 
