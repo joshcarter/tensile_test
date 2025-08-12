@@ -1,0 +1,41 @@
+=== Test Summary ===
+Manufacturer: Overture
+Material Type: PETG
+Color: White
+Axis: z
+Cross-section area: 60.0 mm²
+Trials: 5
+Threshold: 50.0 N
+Extrusion width: 0.6 mm
+Layer height: 0.16 mm
+Printer: Prusa Mk3
+Results:
+  Trial 1: 742.49 N
+  Trial 2: 371.91 N
+  Trial 3: 508.10 N
+  Trial 5: 692.03 N
+Average max force: 578.60 N
+Tensile strength: 9.64 MPa
+
+
+=== Test Summary ===
+Manufacturer: Overture
+Material Type: PETG
+Color: White
+Axis: xy
+Cross-section area: 30.0 mm²
+Trials: 5
+Threshold: 50.0 N
+Extrusion width: 0.6 mm
+Layer height: 0.16 mm
+Printer: Prusa Mk3
+Results:
+  Trial 1: 1512.97 N
+  Trial 2: 1491.84 N
+  Trial 3: 1392.16 N
+  Trial 4: 1428.71 N
+  Trial 5: 1501.86 N
+Average max force: 1465.51 N
+Tensile strength: 48.85 MPa
+
+

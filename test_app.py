@@ -75,6 +75,10 @@ class TestApp(App):
         )
         self.query_one("#footer", Static).update("below threshold…")
 
+    async def on_unmount(self):
+        """Called when the app is about to exit - ensure cleanup happens."""
+        self.cleanup_and_save_results()
+
     def update_reading(self):
         now = time.monotonic()
 
@@ -140,13 +144,7 @@ class TestApp(App):
         self.trial_idx += 1
 
         if self.trial_idx > self.trials:
-            # auto-quit when all trials are done
-            global TEST_RESULT_FORCE, TEST_RESULT_STRENGTH
-            TEST_RESULT_FORCE = statistics.mean(self.results)
-            TEST_RESULT_STRENGTH = TEST_RESULT_FORCE / self.cross_section
-
-            self.log_summary(dname)
-            self.update_master_summary()
+            # All trials completed - exit
             self.reader.close()
             self.exit()
         else:
@@ -156,17 +154,46 @@ class TestApp(App):
             self.graph.reset()
             self.reader.reset()
 
+    def cleanup_and_save_results(self):
+        """
+        Cleanup method that calculates results and saves summaries for any completed trials.
+        Called on any app exit (clean or error).
+        """
+        if not self.results:
+            # No completed trials to process
+            return
+            
+        # Calculate results from completed trials
+        global TEST_RESULT_FORCE, TEST_RESULT_STRENGTH
+        TEST_RESULT_FORCE = statistics.mean(self.results)
+        TEST_RESULT_STRENGTH = TEST_RESULT_FORCE / self.cross_section
+        
+        # Create data directory name
+        dname = f"data/{self.manufacturer} {self.type} {self.color}"
+        
+        # Save summary and update master CSV
+        self.log_summary(dname)
+        self.update_master_summary()
+
     def log_summary(self, dname):
         """Write a summary of the test results to a file."""
+        os.makedirs(dname, exist_ok=True)
         fname = os.path.join(dname, f"summary.txt")
+        
+        completed_trials = len(self.results)
+        is_incomplete = completed_trials < self.trials
+        
         with open(fname, "a") as f:
             f.write("=== Test Summary ===\n")
+            if is_incomplete:
+                f.write(f"*** INCOMPLETE TEST - {completed_trials} of {self.trials} trials completed ***\n")
             f.write(f"Manufacturer: {self.manufacturer}\n")
             f.write(f"Material Type: {self.type}\n")
             f.write(f"Color: {self.color}\n")
             f.write(f"Axis: {self.axis}\n")
             f.write(f"Cross-section area: {self.cross_section} mm²\n")
-            f.write(f"Trials: {self.trials}\n")
+            f.write(f"Trials planned: {self.trials}\n")
+            f.write(f"Trials completed: {completed_trials}\n")
             f.write(f"Threshold: {self.threshold} N\n")
             f.write(f"Extrusion width: {self.extrusion_width} mm\n")
             f.write(f"Layer height: {self.layer_height} mm\n")
@@ -174,8 +201,8 @@ class TestApp(App):
             f.write("Results:\n")
             for i, res in enumerate(self.results, 1):
                 f.write(f"  Trial {i}: {res:.2f} N\n")
-            f.write(f"Average max force: {TEST_RESULT_FORCE:.2f} N\n")
-            f.write(f"Tensile strength: {TEST_RESULT_STRENGTH:.2f} MPa\n")
+            f.write(f"Average max force ({completed_trials} trials): {TEST_RESULT_FORCE:.2f} N\n")
+            f.write(f"Tensile strength ({completed_trials} trials): {TEST_RESULT_STRENGTH:.2f} MPa\n")
             f.write("\n\n")
 
     def update_master_summary(self):

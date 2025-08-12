@@ -77,14 +77,24 @@ def main():
         app.layer_height = args.layer_height
         app.printer = args.printer
         app.cross_section = args.cross_section
-        app.run()
-
-        # need to print this after the TUI exits
-        print("\n=== TEST SUMMARY ===")
-        for i, res in enumerate(test_app.TEST_RESULTS, 1):
-            print(f"  Trial {i}: {res:.2f} N")
-        print(f"Average max force: {test_app.TEST_RESULT_FORCE:.2f} N")
-        print(f"Tensile strength: {test_app.TEST_RESULT_STRENGTH:.2f} MPa")
+        
+        try:
+            app.run()
+        finally:
+            # Ensure cleanup happens even if app crashed
+            app.cleanup_and_save_results()
+            
+            # Print console summary for any completed trials
+            if test_app.TEST_RESULTS:
+                completed_trials = len(test_app.TEST_RESULTS)
+                print(f"\n=== TEST SUMMARY ({completed_trials} trials) ===")
+                for i, res in enumerate(test_app.TEST_RESULTS, 1):
+                    print(f"  Trial {i}: {res:.2f} N")
+                print(f"Average max force: {test_app.TEST_RESULT_FORCE:.2f} N")
+                print(f"Tensile strength: {test_app.TEST_RESULT_STRENGTH:.2f} MPa")
+            else:
+                print("\n=== TEST SUMMARY ===")
+                print("No trials completed.")
 
 
 if __name__ == "__main__":
