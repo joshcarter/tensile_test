@@ -14,8 +14,8 @@ SPARK_HEIGHT = 10  # Number of lines for the sparkline plot
 SAMPLE_INTERVAL = 0.01  # 100 Hz
 DROP_DURATION = 10.0  # seconds below threshold to end trial
 CROSS_SECTION = None  # will get overriden to the appropriate cross-sectional area
-XY_AXIS_AREA = 20  # mm^2 cross-sectional area for the XY axis test
-Z_AXIS_AREA = 30  # mm^2 cross-sectional area for the Z axis test
+XY_AXIS_AREA = 25  # mm^2 cross-sectional area for the XY axis test
+Z_AXIS_AREA = 50  # mm^2 cross-sectional area for the Z axis test
 
 # Physics constants
 G = 9.80665  # m/s²

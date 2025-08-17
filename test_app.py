@@ -8,13 +8,14 @@ import csv
 import statistics
 import io
 import zipfile
+import sys
 
 from textual.app import App, ComposeResult
 from textual.widgets import Static
 from rich.panel import Panel
 
 from utils import (
-    SAMPLE_INTERVAL, DROP_DURATION, 
+    SAMPLE_INTERVAL, DROP_DURATION,
     XY_AXIS_AREA, Z_AXIS_AREA, SparklineGraph
 )
 
@@ -41,6 +42,7 @@ class TestApp(App):
         self.layer_height = None
         self.printer = None
         self.cross_section = None  # will be set to XY_AXIS_AREA, Z_AXIS_AREA, or CLI arg
+        self.dirname = None  # directory for saving results
 
         self.reader = None
 
@@ -64,6 +66,10 @@ class TestApp(App):
             else:
                 self.cross_section = XY_AXIS_AREA
 
+        # Set up directory for results
+        self.dirname = f"data/{self.manufacturer} {self.type} {self.color}"
+        os.makedirs(self.dirname, exist_ok=True)
+
         # start polling
         self.set_interval(SAMPLE_INTERVAL, self.update_reading)
         self.set_interval(0.2, self.update_plot)
@@ -74,10 +80,6 @@ class TestApp(App):
             f"[b]TYPE:[/] {self.type}    [b]AXIS:[/] {self.axis}    "
         )
         self.query_one("#footer", Static).update("below threshold…")
-
-    async def on_unmount(self):
-        """Called when the app is about to exit - ensure cleanup happens."""
-        self.cleanup_and_save_results()
 
     def update_reading(self):
         now = time.monotonic()
@@ -125,13 +127,10 @@ class TestApp(App):
 
     def finish_trial(self):
         global TEST_RESULTS, TEST_RESULT_FORCE, TEST_RESULT_STRENGTH
-        
-        dname = f"data/{self.manufacturer} {self.type} {self.color}"
-        os.makedirs(dname, exist_ok=True)
 
         # write ZIP-compressed CSV
         fname = f"{self.axis}-trial-{self.trial_idx}.csv"
-        with zipfile.ZipFile(os.path.join(dname, fname + ".zip"), "w", compression=zipfile.ZIP_DEFLATED) as zipf:
+        with zipfile.ZipFile(os.path.join(self.dirname, fname + ".zip"), "w", compression=zipfile.ZIP_DEFLATED) as zipf:
             with io.StringIO() as csv_buffer:
                 w = csv.writer(csv_buffer)
                 w.writerow(["time_ms", "force_N"])
@@ -157,53 +156,48 @@ class TestApp(App):
     def cleanup_and_save_results(self):
         """
         Cleanup method that calculates results and saves summaries for any completed trials.
-        Called on any app exit (clean or error).
+        Called after the app exits.
         """
         if not self.results:
             # No completed trials to process
             return
-            
+
         # Calculate results from completed trials
         global TEST_RESULT_FORCE, TEST_RESULT_STRENGTH
         TEST_RESULT_FORCE = statistics.mean(self.results)
         TEST_RESULT_STRENGTH = TEST_RESULT_FORCE / self.cross_section
-        
-        # Create data directory name
-        dname = f"data/{self.manufacturer} {self.type} {self.color}"
-        
-        # Save summary and update master CSV
-        self.log_summary(dname)
-        self.update_master_summary()
 
-    def log_summary(self, dname):
-        """Write a summary of the test results to a file."""
-        os.makedirs(dname, exist_ok=True)
-        fname = os.path.join(dname, f"summary.txt")
-        
+        # Save summary and update master CSV
+        with open(os.path.join(self.dirname, "summary.txt"), "a") as f:
+            self.log_summary(f)
+        self.log_summary(sys.stdout)
+
+    def log_summary(self, out):
+        """Write a summary of the test results to a file-like object."""
         completed_trials = len(self.results)
         is_incomplete = completed_trials < self.trials
-        
-        with open(fname, "a") as f:
-            f.write("=== Test Summary ===\n")
-            if is_incomplete:
-                f.write(f"*** INCOMPLETE TEST - {completed_trials} of {self.trials} trials completed ***\n")
-            f.write(f"Manufacturer: {self.manufacturer}\n")
-            f.write(f"Material Type: {self.type}\n")
-            f.write(f"Color: {self.color}\n")
-            f.write(f"Axis: {self.axis}\n")
-            f.write(f"Cross-section area: {self.cross_section} mm²\n")
-            f.write(f"Trials planned: {self.trials}\n")
-            f.write(f"Trials completed: {completed_trials}\n")
-            f.write(f"Threshold: {self.threshold} N\n")
-            f.write(f"Extrusion width: {self.extrusion_width} mm\n")
-            f.write(f"Layer height: {self.layer_height} mm\n")
-            f.write(f"Printer: {self.printer}\n")
-            f.write("Results:\n")
-            for i, res in enumerate(self.results, 1):
-                f.write(f"  Trial {i}: {res:.2f} N\n")
-            f.write(f"Average max force ({completed_trials} trials): {TEST_RESULT_FORCE:.2f} N\n")
-            f.write(f"Tensile strength ({completed_trials} trials): {TEST_RESULT_STRENGTH:.2f} MPa\n")
-            f.write("\n\n")
+
+        out.write("=== Test Summary ===\n")
+        if is_incomplete:
+            out.write(f"*** INCOMPLETE TEST - {completed_trials} of {self.trials} trials completed ***\n")
+        out.write(f"Manufacturer: {self.manufacturer}\n")
+        out.write(f"Material Type: {self.type}\n")
+        out.write(f"Color: {self.color}\n")
+        out.write(f"Axis: {self.axis}\n")
+        out.write(f"Cross-section area: {self.cross_section} mm²\n")
+        out.write(f"Trials planned: {self.trials}\n")
+        out.write(f"Trials completed: {completed_trials}\n")
+        out.write(f"Threshold: {self.threshold} N\n")
+        out.write(f"Extrusion width: {self.extrusion_width} mm\n")
+        out.write(f"Layer height: {self.layer_height} mm\n")
+        out.write(f"Printer: {self.printer}\n")
+        out.write("Results:\n")
+        for i, res in enumerate(self.results, 1):
+            out.write(f"  Trial {i}: {res:.2f} N\n")
+        out.write(f"Average max force ({completed_trials} trials): {TEST_RESULT_FORCE:.2f} N\n")
+        out.write(f"Tensile strength ({completed_trials} trials): {TEST_RESULT_STRENGTH:.2f} MPa\n")
+        out.write("\n\n")
+        out.flush()
 
     def update_master_summary(self):
         # Log results to CSV, updating existing rows by type/manufacturer/color
