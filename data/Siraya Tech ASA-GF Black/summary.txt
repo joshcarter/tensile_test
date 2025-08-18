@@ -32,3 +32,47 @@ Average max force: 1164.51 N
 Tensile strength: 58.23 MPa
 
 
+=== Test Summary ===
+Manufacturer: Siraya Tech
+Material Type: ASA-GF
+Color: Black
+Axis: xy
+Cross-section area: 20.0 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.6 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 1091.45 N
+  Trial 2: 1047.00 N
+  Trial 3: 1010.31 N
+  Trial 4: 1174.43 N
+  Trial 5: 1011.46 N
+Average max force (5 trials): 1066.93 N
+Tensile strength (5 trials): 53.35 MPa
+
+
+=== Test Summary ===
+Manufacturer: Siraya Tech
+Material Type: ASA-GF
+Color: Black
+Axis: z
+Cross-section area: 30.0 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.6 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 596.04 N
+  Trial 2: 576.77 N
+  Trial 3: 580.54 N
+  Trial 4: 646.22 N
+  Trial 5: 565.19 N
+Average max force (5 trials): 592.95 N
+Tensile strength (5 trials): 19.77 MPa
+
+
