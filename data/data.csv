@@ -5,11 +5,17 @@ Siraya Tech,ASA-GF,Black,,,,58.23,20.29
 Siraya Tech,PET-CF,Black,,,,101.66,31.34
 eSun,PLA-CF,FDE,0.4,0.16,Voron 2.4,52.83,25.02
 Polymaker,PA6-GF25,Gray,0.4,0.16,Voron 2.4,111.36,37.53
-temp,PLA-CF,FDE,0.4,0.16,Voron 2.4,,11.59
-test,PLA-CF,FDE,0.4,0.16,Voron 2.4,240.06,8.05
 Siraya Tech,PET-GF,FDE,0.4,0.16,Voron 2.4,60.81,19.24
 Polymaker,PA6-GF25 (0.6mm),Gray,0.6,0.16,Voron 2.4,,28.74
 Polymaker,PA6-GF (0.6mm),Gray,0.6,0.16,Voron 2.4,94.05,
 Overture,PETG,Yellow,0.6,0.16,Prusa XL,52.54,
-test,test,test,0.6,0.16,Voron 2.4,11.02,
 Overture,PETG,White,0.6,0.16,Prusa Mk3,48.85,9.64
+Prusa,PETG,Orange,0.42,0.2,,45.73,15.12
+Polymaker,PLA Pro,FDE,0.42,0.2,Prusa XL,40.06,30.64
+Atomic Filament,PETG,Cosmic Graphite,0.42,0.2,Voron 2.4,46.54,18.42
+Overture,PETG,Black,0.42,0.2,Voron 2.4,44.89,23.30
+Atomic Filament,PETG,Starry Night,0.42,0.2,Prusa XL,41.95,12.07
+Atomic Filament,PETG,Metallic Silver,0.42,0.2,Voron 2.4,45.96,25.12
+Overture,PETG,Light Gray,0.42,0.2,Voron 2.4,45.58,23.09
+Polymaker,PLA Pro,Black,0.42,0.2,Prusa XL,44.74,23.80
+Polymaker,PLA-CF,Black,0.42,0.2,Prusa XL,32.86,9.96

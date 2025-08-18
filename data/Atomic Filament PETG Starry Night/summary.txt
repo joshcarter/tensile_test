@@ -1,0 +1,42 @@
+=== Test Summary ===
+Manufacturer: Atomic Filament
+Material Type: PETG
+Color: Starry Night
+Axis: xy
+Cross-section area: 25.0 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 1118.13 N
+  Trial 2: 1057.45 N
+  Trial 3: 1072.35 N
+  Trial 4: 1018.34 N
+  Trial 5: 977.79 N
+Average max force (5 trials): 1048.81 N
+Tensile strength (5 trials): 41.95 MPa
+
+
+=== Test Summary ===
+Manufacturer: Atomic Filament
+Material Type: PETG
+Color: Starry Night
+Axis: z
+Cross-section area: 50.0 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 711.83 N
+  Trial 2: 921.82 N
+  Trial 3: 1128.98 N
+Average max force (5 trials): 920.88 N
+Tensile strength (5 trials): 18.42 MPa
+
+

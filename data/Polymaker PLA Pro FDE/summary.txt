@@ -18,3 +18,47 @@ Average max force: 552.57 N
   Trial 4: 644.71 N
   Trial 5: 677.28 N
 Average max force: 705.28 N
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PLA Pro
+Color: FDE
+Axis: xy
+Cross-section area: 25.0 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 969.86 N
+  Trial 2: 1007.56 N
+  Trial 3: 1019.64 N
+  Trial 4: 1032.30 N
+  Trial 5: 978.17 N
+Average max force (5 trials): 1001.51 N
+Tensile strength (5 trials): 40.06 MPa
+
+
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PLA Pro
+Color: FDE
+Axis: z
+Cross-section area: 50.0 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Prusa XL
+Results:
+  Trial 1: 1484.06 N
+  Trial 2: 1478.57 N
+  Trial 3: 1530.45 N
+  Trial 4: 1580.10 N
+  Trial 5: 1587.18 N
+Average max force (5 trials): 1532.07 N
+Tensile strength (5 trials): 30.64 MPa
+
+

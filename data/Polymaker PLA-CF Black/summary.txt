@@ -1,0 +1,44 @@
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PLA-CF
+Color: Black
+Axis: xy
+Cross-section area: 25.0 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Prusa XL
+Results:
+  Trial 1: 919.37 N
+  Trial 2: 851.20 N
+  Trial 3: 794.23 N
+  Trial 4: 789.55 N
+  Trial 5: 752.56 N
+Average max force (5 trials): 821.38 N
+Tensile strength (5 trials): 32.86 MPa
+
+
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PLA-CF
+Color: Black
+Axis: z
+Cross-section area: 50.0 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Prusa XL
+Results:
+  Trial 1: 505.69 N
+  Trial 2: 381.22 N
+  Trial 3: 519.98 N
+  Trial 4: 586.28 N
+  Trial 5: 497.48 N
+Average max force (5 trials): 498.13 N
+Tensile strength (5 trials): 9.96 MPa
+
+

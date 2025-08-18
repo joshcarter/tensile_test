@@ -1,0 +1,42 @@
+=== Test Summary ===
+Manufacturer: Prusa
+Material Type: PETG
+Color: Orange
+Axis: xy
+Cross-section area: 20.0 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Results:
+  Trial 1: 920.33 N
+  Trial 2: 907.63 N
+  Trial 3: 958.63 N
+  Trial 4: 805.73 N
+  Trial 5: 980.42 N
+Average max force (5 trials): 914.55 N
+Tensile strength (5 trials): 45.73 MPa
+
+
+=== Test Summary ===
+Manufacturer: Prusa
+Material Type: PETG
+Color: Orange
+Axis: z
+Cross-section area: 30.0 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Results:
+  Trial 1: 588.67 N
+  Trial 2: 256.19 N
+  Trial 3: 432.68 N
+  Trial 4: 789.58 N
+  Trial 5: 200.93 N
+Average max force (5 trials): 453.61 N
+Tensile strength (5 trials): 15.12 MPa
+
+

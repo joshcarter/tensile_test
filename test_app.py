@@ -171,6 +171,7 @@ class TestApp(App):
         with open(os.path.join(self.dirname, "summary.txt"), "a") as f:
             self.log_summary(f)
         self.log_summary(sys.stdout)
+        self.update_master_summary()
 
     def log_summary(self, out):
         """Write a summary of the test results to a file-like object."""

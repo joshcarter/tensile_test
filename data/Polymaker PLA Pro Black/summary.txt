@@ -1,0 +1,44 @@
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PLA Pro
+Color: Black
+Axis: xy
+Cross-section area: 30.0 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Prusa XL
+Results:
+  Trial 1: 1346.32 N
+  Trial 2: 1314.44 N
+  Trial 3: 1366.67 N
+  Trial 4: 1315.06 N
+  Trial 5: 1369.25 N
+Average max force (5 trials): 1342.35 N
+Tensile strength (5 trials): 44.74 MPa
+
+
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PLA Pro
+Color: Black
+Axis: z
+Cross-section area: 60.0 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Prusa XL
+Results:
+  Trial 1: 1264.34 N
+  Trial 2: 1506.93 N
+  Trial 3: 1416.77 N
+  Trial 4: 1529.24 N
+  Trial 5: 1421.86 N
+Average max force (5 trials): 1427.83 N
+Tensile strength (5 trials): 23.80 MPa
+
+

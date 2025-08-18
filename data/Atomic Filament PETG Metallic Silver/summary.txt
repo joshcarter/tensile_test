@@ -1,0 +1,44 @@
+=== Test Summary ===
+Manufacturer: Atomic Filament
+Material Type: PETG
+Color: Metallic Silver
+Axis: xy
+Cross-section area: 25.0 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 1178.51 N
+  Trial 2: 1080.90 N
+  Trial 3: 1110.97 N
+  Trial 4: 1181.86 N
+  Trial 5: 1193.07 N
+Average max force (5 trials): 1149.06 N
+Tensile strength (5 trials): 45.96 MPa
+
+
+=== Test Summary ===
+Manufacturer: Atomic Filament
+Material Type: PETG
+Color: Metallic Silver
+Axis: z
+Cross-section area: 50.0 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 1310.56 N
+  Trial 2: 1266.21 N
+  Trial 3: 1271.33 N
+  Trial 4: 1166.79 N
+  Trial 5: 1266.06 N
+Average max force (5 trials): 1256.19 N
+Tensile strength (5 trials): 25.12 MPa
+
+
