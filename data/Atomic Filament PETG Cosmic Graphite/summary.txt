@@ -64,3 +64,47 @@ Average max force (5 trials): 342.68 N
 Tensile strength (5 trials): 6.85 MPa
 
 
+=== Test Summary ===
+Manufacturer: Atomic Filament
+Material Type: PETG
+Color: Cosmic Graphite
+Axis: xy
+Cross-section area: 35 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Prusa Mk3
+Results:
+  Trial 1: 1726.20 N
+  Trial 2: 1769.83 N
+  Trial 3: 1774.55 N
+  Trial 4: 1736.92 N
+  Trial 5: 1780.50 N
+Average max force (5 trials): 1757.60 N
+Tensile strength (5 trials): 50.22 MPa
+
+
+=== Test Summary ===
+Manufacturer: Atomic Filament
+Material Type: PETG
+Color: Cosmic Graphite
+Axis: z
+Cross-section area: 50 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Prusa Mk3
+Results:
+  Trial 1: 272.53 N
+  Trial 2: 803.64 N
+  Trial 3: 705.42 N
+  Trial 4: 686.46 N
+  Trial 5: 835.99 N
+Average max force (5 trials): 660.81 N
+Tensile strength (5 trials): 13.22 MPa
+
+

@@ -32,3 +32,22 @@ Average max force: 940.23 N
 Tensile strength: 31.34 MPa
 
 
+=== Test Summary ===
+*** INCOMPLETE TEST - 1 of 5 trials completed ***
+Manufacturer: Siraya Tech
+Material Type: PET-CF
+Color: Black
+Axis: xy
+Cross-section area: 35 mm²
+Trials planned: 5
+Trials completed: 1
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 2716.34 N
+Average max force (1 trials): 2716.34 N
+Tensile strength (1 trials): 77.61 MPa
+
+
