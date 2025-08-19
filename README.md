@@ -2,39 +2,73 @@
 
 ## Overview
 
-I use this for measuring the tensile strength of 3D printed plastics. There is a test fixture, an interface board, and program that runs on a nearby laptop.
+I use this for measuring the tensile strength of 3D printed plastics.
+There is a test fixture, an interface board, and program that runs on
+a nearby laptop.
 
 ## Test Fixture
 
 - Hi-Lift Jack
-- S-type load cell (I use 200kg)
-- Two clamps (see `printed_parts/Clamp.stl`)
-- Interface board
+- Two clamps (see `printed_parts/Clamp.3mf`)
+- 500kg S-type load cell
+- HX711 load cell amplifier
+- Rasperry Pi Pico interface board
 - Laptop with USB connection to interface board
 
-## Test Fixture Calibration
+## Test Fixture Assembly
 
-TODO: It would be a great idea to document how to calibrate this. In the meantime, contact me.
+TODO: photo and instructions.
 
-## Test Parts
+## Test Samples
 
-See `printed_parts/Tensile test samples.3mf`. These are sized to fit within the limits of my 200kg load cell. Note that the Z axis has additional cross-sectional area since the Z axis is usually substantially weaker.
-
-The parts probably need to be redesigned to add additional area to the Z axis part. An 30mm^2 I think it's still too small to get an accurate gauge of the true Z axis tensile strength. And it could be fairly argued that a 500kg load cell and much larger sample cross-sections would be better, however I also need to consider just how much plastic I want flying at me at very high velocity when the sample breaks.
+See `printed_parts/Tensile test samples.3mf`. Note that the Z axis has
+additional cross-sectional area since the Z axis is usually
+substantially weaker.
 
 ## Interface Board
 
 - Sparkfun HX711 load cell amplifier
 - Raspberry Pi Pico
 
+TODO: circuit schematic
+
 The MicroPython code for the Pico is in the `pico` subdirectory.
 
-## Local Program
+## Python Requirements
 
-- Run `python main.py` with the commands `calibrate` (initially) and `test` once the calibration has been done. There's a lot more here to document; TBD at the moment, sorry. Bug me if you really want to use this for yourself.
+    pip install -r requirements.txt
 
-# Data
+## Test Fixture Calibration
 
-All of my collected data is in the `data` subdirectory. Note than any measurements in Newtons needs to be converted to megapascals (divide by cross-sectional area) to get the actual strength. The XY cross-sectional area is 20mm^2 and Z cross-sectional area is 30mm^2.
+Initially the fixture will not be calibrated. Load code on the Pi Pico
+(`pico/*.py) and it will output raw readings from the HX711.
 
-TODO: just put the data in this README. Surely that's what people actually care about.
+Find some number of known calibration weights. I used kettlebells and
+used a hanging scale to measure them as accurately as possible. These
+readings (in KG) go into the `CAL_WEIGHTS` list in `utils.py`.
+
+Run the calibration:
+
+    python tensile_test.py calibrate --port /dev/cu.usbserial101
+
+The first "known weight" should be no weight except the printed clamp.
+Then add each known weight, pressing enter when the fixture is steady.
+
+Finally, a `calibration.json` file will be written to this directory.
+That file should be copied to the Pico. Once the Pico has its
+calibration file it will output Newtons of force instead of raw HX711
+readings.
+
+## Running Tensile Tests
+
+The main program is run like so:
+
+    python tensile_test.py test \
+      --port /dev/cu.usbserial101 \
+      --type "PETG-CF" \
+      --manufacturer "Atomic Filament" \
+      --color "black" \
+      --axis xy \
+
+All test data will be output to a directory in the `data`
+subdirectory, plus summary stats will be collected in `data/data.csv`.
