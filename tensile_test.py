@@ -23,7 +23,7 @@ import os
 
 from serial_helper import SerialMovingAverageReader
 from calibrate_app import CalibrateApp
-import test_app
+from test_app import TestApp
 
 
 def main():
@@ -65,7 +65,7 @@ def main():
         app.reader = reader
         app.run()
     else:
-        app = test_app.TestApp()
+        app = TestApp()
         app.reader = reader
         app.type = args.type
         app.manufacturer = args.manufacturer

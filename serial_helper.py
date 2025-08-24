@@ -87,7 +87,7 @@ class SerialMovingAverageReader:
                 self.ser.close()
                 
             # Wait a moment before reopening
-            time.sleep(0.01)
+            time.sleep(0.1)
             
             # Find available port (may be different if device was unplugged/replugged)
             recovery_port = _find_available_port(self.port)
