@@ -1,0 +1,46 @@
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PLA
+Color: Matte Black
+Axis: xy
+Cross-section area: 25 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Prusa XL
+Notes: stringy due to humidity
+Results:
+  Trial 1: 835.36 N
+  Trial 2: 878.82 N
+  Trial 3: 837.70 N
+  Trial 4: 759.13 N
+  Trial 5: 851.52 N
+Average max force (5 trials): 832.50 N
+Tensile strength (5 trials): 33.30 MPa
+
+
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PLA
+Color: Matte Black
+Axis: z
+Cross-section area: 50 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Prusa XL
+Notes: stringy due to humidity
+Results:
+  Trial 1: 320.93 N
+  Trial 2: 570.78 N
+  Trial 3: 301.50 N
+  Trial 4: 583.07 N
+  Trial 5: 584.98 N
+Average max force (5 trials): 472.25 N
+Tensile strength (5 trials): 9.45 MPa
+
+

@@ -1,0 +1,46 @@
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PLA
+Color: Silk Blue White
+Axis: xy
+Cross-section area: 25 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Prusa XL
+Notes: stringy due to humidity
+Results:
+  Trial 1: 1639.11 N
+  Trial 2: 1665.72 N
+  Trial 3: 1648.98 N
+  Trial 4: 1674.27 N
+  Trial 5: 1513.16 N
+Average max force (5 trials): 1628.25 N
+Tensile strength (5 trials): 65.13 MPa
+
+
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PLA
+Color: Silk Blue White
+Axis: z
+Cross-section area: 50 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Prusa XL
+Notes: stringy due to humidity
+Results:
+  Trial 1: 1116.14 N
+  Trial 2: 885.83 N
+  Trial 3: 914.11 N
+  Trial 4: 1112.09 N
+  Trial 5: 1151.36 N
+Average max force (5 trials): 1035.90 N
+Tensile strength (5 trials): 20.72 MPa
+
+

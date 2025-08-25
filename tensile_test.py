@@ -52,6 +52,7 @@ def main():
     t.add_argument("--extrusion-width", type=float, help="Extrusion width in mm", default=config.get("extrusion_width", 0.4)),
     t.add_argument("--layer-height", type=float, help="Layer height in mm", default=config.get("layer_height", 0.2)),
     t.add_argument("--printer", help="Printer model or name", default=config.get("printer", ""))
+    t.add_argument("--notes", help="Optional notes about the test", default="")
     t.add_argument("--cross-section", type=float, default=None)
     t.set_defaults(mode="test")
 
@@ -76,6 +77,7 @@ def main():
         app.extrusion_width = args.extrusion_width
         app.layer_height = args.layer_height
         app.printer = args.printer
+        app.notes = args.notes
         app.cross_section = args.cross_section
         
         try:

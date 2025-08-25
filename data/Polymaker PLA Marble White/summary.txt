@@ -1,0 +1,46 @@
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PLA
+Color: Marble White
+Axis: xy
+Cross-section area: 25 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Prusa XL
+Notes: stringy due to humidity
+Results:
+  Trial 1: 875.94 N
+  Trial 2: 868.21 N
+  Trial 3: 888.13 N
+  Trial 4: 869.14 N
+  Trial 5: 846.67 N
+Average max force (5 trials): 869.62 N
+Tensile strength (5 trials): 34.78 MPa
+
+
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PLA
+Color: Marble White
+Axis: z
+Cross-section area: 50 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Prusa XL
+Notes: stringy due to humidity
+Results:
+  Trial 1: 500.10 N
+  Trial 2: 505.64 N
+  Trial 3: 640.95 N
+  Trial 4: 724.42 N
+  Trial 5: 714.68 N
+Average max force (5 trials): 617.16 N
+Tensile strength (5 trials): 12.34 MPa
+
+

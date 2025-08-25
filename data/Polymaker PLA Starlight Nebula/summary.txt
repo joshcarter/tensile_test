@@ -1,0 +1,46 @@
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PLA
+Color: Starlight Purple
+Axis: xy
+Cross-section area: 25 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Prusa XL
+Notes: stringy due to humidity
+Results:
+  Trial 1: 1397.49 N
+  Trial 2: 1414.84 N
+  Trial 3: 1438.82 N
+  Trial 4: 1431.25 N
+  Trial 5: 1334.19 N
+Average max force (5 trials): 1403.32 N
+Tensile strength (5 trials): 56.13 MPa
+
+
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PLA
+Color: Starlight Purple
+Axis: z
+Cross-section area: 50 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Prusa XL
+Notes: stringy due to humidity
+Results:
+  Trial 1: 1158.86 N
+  Trial 2: 1205.88 N
+  Trial 3: 1098.42 N
+  Trial 4: 1168.27 N
+  Trial 5: 1215.80 N
+Average max force (5 trials): 1169.45 N
+Tensile strength (5 trials): 23.39 MPa
+
+

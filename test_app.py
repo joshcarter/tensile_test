@@ -41,6 +41,7 @@ class TestApp(App):
         self.extrusion_width = None
         self.layer_height = None
         self.printer = None
+        self.notes = None
         self.cross_section = None  # will be set to XY_AXIS_AREA, Z_AXIS_AREA, or CLI arg
         self.dirname = None  # directory for saving results
 
@@ -97,9 +98,9 @@ class TestApp(App):
         # update header (no more raw values)
         hdr = self.query_one("#header", Static)
         hdr.update(
-            f"[b]MODE:[/] test    [b]N:[/] {F:.1f}    "
-            f"[b]TYPE:[/] {self.type}    [b]AXIS:[/] {self.axis}    "
-            f"[b]TRIAL:[/] {self.trial_idx}/{self.trials}    "
+            f"{self.manufacturer} {self.type} {self.color}    [b]N:[/] {F:.1f}    "
+            f"[b]AXIS:[/] {self.axis}    "
+            f"[b]TRIAL:[/] {self.trial_idx}/{self.trials}"
         )
 
         # Add to graph for sparkline
@@ -192,6 +193,8 @@ class TestApp(App):
         out.write(f"Extrusion width: {self.extrusion_width} mm\n")
         out.write(f"Layer height: {self.layer_height} mm\n")
         out.write(f"Printer: {self.printer}\n")
+        if self.notes:
+            out.write(f"Notes: {self.notes}\n")
         out.write("Results:\n")
         for i, res in enumerate(self.results, 1):
             out.write(f"  Trial {i}: {res:.2f} N\n")
@@ -209,14 +212,26 @@ class TestApp(App):
         rows = []
         fieldnames = [
             "brand", "material type", "color",
-            "extrusion width", "layer height", "printer",
-            "xy strength (Mpa)", "z strength (Mpa)"
+            "xy strength (Mpa)", "z strength (Mpa)", "notes"
         ]
         if os.path.exists(csv_path) and os.stat(csv_path).st_size > 0:
             with open(csv_path, newline="") as csv_file:
                 reader = csv.DictReader(csv_file)
                 for row in reader:
                     rows.append(row)
+
+        # Create notes string with key=value pairs separated by semicolons
+        notes_parts = []
+        if self.extrusion_width:
+            notes_parts.append(f"extrusion_width={self.extrusion_width}")
+        if self.layer_height:
+            notes_parts.append(f"layer_height={self.layer_height}")
+        if self.printer:
+            notes_parts.append(f"printer={self.printer}")
+        if self.notes:
+            notes_parts.append(f"notes={self.notes}")
+        
+        notes_str = ";".join(notes_parts)
 
         # Prepare updated row
         xy_val = f"{TEST_RESULT_STRENGTH:.2f}" if self.axis == "xy" else ""
@@ -231,9 +246,7 @@ class TestApp(App):
                     row["xy strength (Mpa)"] = xy_val
                 else:
                     row["z strength (Mpa)"] = z_val
-                row["extrusion width"] = str(self.extrusion_width)
-                row["layer height"] = str(self.layer_height)
-                row["printer"] = self.printer
+                row["notes"] = notes_str
                 found = True
                 break
 
@@ -243,11 +256,9 @@ class TestApp(App):
                 "brand": self.manufacturer,
                 "material type": self.type,
                 "color": self.color,
-                "extrusion width": str(self.extrusion_width),
-                "layer height": str(self.layer_height),
-                "printer": self.printer,
                 "xy strength (Mpa)": xy_val,
-                "z strength (Mpa)": z_val
+                "z strength (Mpa)": z_val,
+                "notes": notes_str
             })
 
         # Write all rows back to CSV
