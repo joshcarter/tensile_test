@@ -1,7 +1,7 @@
 brand,material type,color,xy strength (Mpa),z strength (Mpa),notes
 Taulman,Bridge,Clear,31.11,24.34,
 Atomic Filament,PETG-CF,Black,49.75,34.07,
-Siraya Tech,ASA-GF,Black,53.35,19.77,extrusion_width=0.6;layer_height=0.2;printer=Voron 2.4
+Siraya Tech,ASA-GF,Black,56.80,15.04,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
 Siraya Tech,PET-CF,Black,77.61,31.34,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
 eSun,PLA-CF,FDE,52.83,25.02,extrusion_width=0.4;layer_height=0.16;printer=Voron 2.4
 Polymaker,PA6-GF25,Gray,111.36,37.53,extrusion_width=0.4;layer_height=0.16;printer=Voron 2.4
@@ -21,3 +21,6 @@ Polymaker,PLA,Starlight Nebula,56.13,23.39,extrusion_width=0.42;layer_height=0.2
 Polymaker,PLA,Silk Blue White,65.13,20.72,extrusion_width=0.42;layer_height=0.2;printer=Prusa XL;notes=stringy due to humidity
 Polymaker,PLA,Matte Black,33.30,9.45,extrusion_width=0.42;layer_height=0.2;printer=Prusa XL;notes=stringy due to humidity
 Polymaker,PLA,Marble White,34.78,12.34,extrusion_width=0.42;layer_height=0.2;printer=Prusa XL;notes=stringy due to humidity
+3DXTech,ASA-CF,Black,49.56,6.20,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
+3DXTech,ABS-GF,Black,48.67,11.93,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
+Atomic Filament,ABS-CF,Black,44.09,12.12,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4

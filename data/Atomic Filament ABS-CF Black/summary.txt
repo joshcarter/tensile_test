@@ -1,0 +1,44 @@
+=== Test Summary ===
+Manufacturer: Atomic Filament
+Material Type: ABS-CF
+Color: Black
+Axis: xy
+Cross-section area: 25 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 1057.91 N
+  Trial 2: 1106.97 N
+  Trial 3: 1110.02 N
+  Trial 4: 1122.81 N
+  Trial 5: 1114.07 N
+Average max force (5 trials): 1102.35 N
+Tensile strength (5 trials): 44.09 MPa
+
+
+=== Test Summary ===
+Manufacturer: Atomic Filament
+Material Type: ABS-CF
+Color: Black
+Axis: z
+Cross-section area: 50 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 490.37 N
+  Trial 2: 768.58 N
+  Trial 3: 759.01 N
+  Trial 4: 503.27 N
+  Trial 5: 508.77 N
+Average max force (5 trials): 606.00 N
+Tensile strength (5 trials): 12.12 MPa
+
+

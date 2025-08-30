@@ -1,0 +1,44 @@
+=== Test Summary ===
+Manufacturer: 3DXTech
+Material Type: ABS-GF
+Color: Black
+Axis: xy
+Cross-section area: 25 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 1143.20 N
+  Trial 2: 1202.85 N
+  Trial 3: 1263.80 N
+  Trial 4: 1207.58 N
+  Trial 5: 1266.75 N
+Average max force (5 trials): 1216.84 N
+Tensile strength (5 trials): 48.67 MPa
+
+
+=== Test Summary ===
+Manufacturer: 3DXTech
+Material Type: ABS-GF
+Color: Black
+Axis: z
+Cross-section area: 50 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 775.59 N
+  Trial 2: 472.80 N
+  Trial 3: 672.45 N
+  Trial 4: 462.52 N
+  Trial 5: 599.72 N
+Average max force (5 trials): 596.62 N
+Tensile strength (5 trials): 11.93 MPa
+
+

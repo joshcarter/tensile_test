@@ -1,0 +1,44 @@
+=== Test Summary ===
+Manufacturer: 3DXTech
+Material Type: ASA-CF
+Color: Black
+Axis: xy
+Cross-section area: 25 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 1241.60 N
+  Trial 2: 1232.54 N
+  Trial 3: 1222.70 N
+  Trial 4: 1253.11 N
+  Trial 5: 1244.67 N
+Average max force (5 trials): 1238.92 N
+Tensile strength (5 trials): 49.56 MPa
+
+
+=== Test Summary ===
+Manufacturer: 3DXTech
+Material Type: ASA-CF
+Color: Black
+Axis: z
+Cross-section area: 50 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 187.14 N
+  Trial 2: 454.19 N
+  Trial 3: 249.47 N
+  Trial 4: 336.47 N
+  Trial 5: 321.88 N
+Average max force (5 trials): 309.83 N
+Tensile strength (5 trials): 6.20 MPa
+
+
