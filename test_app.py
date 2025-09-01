@@ -273,6 +273,9 @@ class TestApp(App):
                 "notes": notes_str
             })
 
+        # Sort rows by xy strength descending (treat empty as 0)
+        rows.sort(key=lambda r: float(r.get("xy strength (Mpa)", "") or 0), reverse=True)
+
         # Write all rows back to CSV
         with open(csv_path, "w", newline="") as csv_file:
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
