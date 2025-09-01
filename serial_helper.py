@@ -16,7 +16,7 @@ def _find_available_port(preferred_port=None):
         ports_to_try.append(preferred_port)
     
     # Add default ports to try
-    default_ports = ["/dev/cu.usbmodem103", "/dev/cu.usbmodem1103", "/dev/cu.usbmodem13103", "/dev/serial1"]
+    default_ports = ["/dev/cu.usbmodem103", "/dev/cu.usbmodem1103", "/dev/cu.usbmodem13103", "/dev/serial1", "/dev/cu.usbmodem11203"]
     for port in default_ports:
         if port not in ports_to_try:
             ports_to_try.append(port)

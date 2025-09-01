@@ -2,7 +2,7 @@ brand,material type,color,xy strength (Mpa),z strength (Mpa),notes
 Taulman,Bridge,Clear,31.11,24.34,
 Atomic Filament,PETG-CF,Black,49.75,34.07,
 Siraya Tech,ASA-GF,Black,56.80,15.04,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
-Siraya Tech,PET-CF,Black,77.61,31.34,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
+Siraya Tech,PET-CF,Black,86.71,15.19,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
 eSun,PLA-CF,FDE,52.83,25.02,extrusion_width=0.4;layer_height=0.16;printer=Voron 2.4
 Polymaker,PA6-GF25,Gray,111.36,37.53,extrusion_width=0.4;layer_height=0.16;printer=Voron 2.4
 Siraya Tech,PET-GF,FDE,60.81,19.24,extrusion_width=0.4;layer_height=0.16;printer=Voron 2.4
@@ -24,3 +24,5 @@ Polymaker,PLA,Marble White,34.78,12.34,extrusion_width=0.42;layer_height=0.2;pri
 3DXTech,ASA-CF,Black,49.56,6.20,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
 3DXTech,ABS-GF,Black,48.67,11.93,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
 Atomic Filament,ABS-CF,Black,44.09,12.12,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
+Polymaker,PET-CF,Black,59.85,12.30,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
+Siraya Tech,PET-GF,Flat Dark Earth,70.57,18.41,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4

@@ -1,0 +1,44 @@
+=== Test Summary ===
+Manufacturer: Siraya Tech
+Material Type: PET-GF
+Color: Flat Dark Earth
+Axis: xy
+Cross-section area: 25 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 1755.67 N
+  Trial 2: 1772.74 N
+  Trial 3: 1833.31 N
+  Trial 4: 1689.01 N
+  Trial 5: 1770.20 N
+Average max force (5 trials): 1764.18 N
+Tensile strength (5 trials): 70.57 MPa
+
+
+=== Test Summary ===
+Manufacturer: Siraya Tech
+Material Type: PET-GF
+Color: Flat Dark Earth
+Axis: z
+Cross-section area: 50 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 819.42 N
+  Trial 2: 975.56 N
+  Trial 3: 1012.12 N
+  Trial 4: 1041.12 N
+  Trial 5: 754.36 N
+Average max force (5 trials): 920.52 N
+Tensile strength (5 trials): 18.41 MPa
+
+

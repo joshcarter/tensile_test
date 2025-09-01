@@ -76,11 +76,15 @@ class TestApp(App):
         self.set_interval(0.2, self.update_plot)
 
         # initialize UI
-        self.query_one("#header", Static).update(
-            f"[b]MODE:[/] test    [b]N:[/] –    "
-            f"[b]TYPE:[/] {self.type}    [b]AXIS:[/] {self.axis}    "
+        hdr = self.query_one("#header", Static)
+        hdr.update(
+            f"{self.manufacturer} {self.type} {self.color}    [center][b]N:[/] 0[/]    [right][b]AXIS:[/] {self.axis}    [b]TRIAL:[/] {self.trial_idx}/{self.trials}[/]"
         )
-        self.query_one("#footer", Static).update("below threshold…")
+        footer_text = "below threshold…"
+        last_force = self.get_last_break_force()
+        if last_force is not None:
+            footer_text = f"below threshold…[right]Last max: {last_force:.1f} N[/]"
+        self.query_one("#footer", Static).update(footer_text)
 
     def update_reading(self):
         now = time.monotonic()
@@ -98,9 +102,7 @@ class TestApp(App):
         # update header (no more raw values)
         hdr = self.query_one("#header", Static)
         hdr.update(
-            f"{self.manufacturer} {self.type} {self.color}    [b]N:[/] {F:.1f}    "
-            f"[b]AXIS:[/] {self.axis}    "
-            f"[b]TRIAL:[/] {self.trial_idx}/{self.trials}"
+            f"{self.manufacturer} {self.type} {self.color}    [center][b]N:[/] {F:.1f}[/]    [right][b]AXIS:[/] {self.axis}    [b]TRIAL:[/] {self.trial_idx}/{self.trials}[/]"
         )
 
         # Add to graph for sparkline
@@ -150,9 +152,19 @@ class TestApp(App):
         else:
             # next trial
             self.state = "waiting"
-            self.query_one("#footer", Static).update("below threshold…")
+            footer_text = "below threshold…"
+            last_force = self.get_last_break_force()
+            if last_force is not None:
+                footer_text = f"below threshold…[right]Last max: {last_force:.1f} N[/]"
+            self.query_one("#footer", Static).update(footer_text)
             self.graph.reset()
             self.reader.reset()
+
+    def get_last_break_force(self):
+        """Get the break force from the previous trial, or None if this is the first trial."""
+        if self.trial_idx > 1 and len(self.results) >= 1:
+            return self.results[-1]
+        return None
 
     def cleanup_and_save_results(self):
         """

@@ -8,7 +8,7 @@ from collections import deque
 # Constants for sparkline plotting
 SPARK_BLOCKS = "▁▂▃▄▅▆▇█"
 SPARK_DURATION = 5.0
-SPARK_HEIGHT = 10  # Number of lines for the sparkline plot
+SPARK_HEIGHT = 7  # Number of lines for the sparkline plot
 
 # Test constants
 SAMPLE_INTERVAL = 0.01  # 100 Hz

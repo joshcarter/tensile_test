@@ -32,3 +32,93 @@ Average max force: 574.72 N
 Tensile strength: 19.16 MPa
 
 
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PET-CF
+Color: Black
+Axis: xy
+Cross-section area: 25 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Notes: wet filament very stringy
+Results:
+  Trial 1: 1449.36 N
+  Trial 2: 1390.84 N
+  Trial 3: 1447.45 N
+  Trial 4: 1542.96 N
+  Trial 5: 1458.29 N
+Average max force (5 trials): 1457.78 N
+Tensile strength (5 trials): 58.31 MPa
+
+
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PET-CF
+Color: Black
+Axis: z
+Cross-section area: 50 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Notes: wet filament very stringy
+Results:
+  Trial 1: 375.61 N
+  Trial 2: 745.10 N
+  Trial 3: 580.87 N
+  Trial 4: 474.57 N
+  Trial 5: 611.80 N
+Average max force (5 trials): 557.59 N
+Tensile strength (5 trials): 11.15 MPa
+
+
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PET-CF
+Color: Black
+Axis: xy
+Cross-section area: 25 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 1454.38 N
+  Trial 2: 1467.38 N
+  Trial 3: 1513.72 N
+  Trial 4: 1513.84 N
+  Trial 5: 1532.18 N
+Average max force (5 trials): 1496.30 N
+Tensile strength (5 trials): 59.85 MPa
+
+
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PET-CF
+Color: Black
+Axis: z
+Cross-section area: 50 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 691.04 N
+  Trial 2: 637.08 N
+  Trial 3: 559.69 N
+  Trial 4: 612.60 N
+  Trial 5: 573.85 N
+Average max force (5 trials): 614.85 N
+Tensile strength (5 trials): 12.30 MPa
+
+
