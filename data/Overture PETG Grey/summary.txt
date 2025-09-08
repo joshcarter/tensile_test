@@ -1,0 +1,44 @@
+=== Test Summary ===
+Manufacturer: Overture
+Material Type: PETG
+Color: Grey
+Axis: xy
+Cross-section area: 25 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 1416.55 N
+  Trial 2: 1408.84 N
+  Trial 3: 1434.21 N
+  Trial 4: 1414.04 N
+  Trial 5: 1432.02 N
+Average max force (5 trials): 1421.13 N
+Tensile strength (5 trials): 56.85 MPa
+
+
+=== Test Summary ===
+Manufacturer: Overture
+Material Type: PETG
+Color: Grey
+Axis: z
+Cross-section area: 50 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 1254.11 N
+  Trial 2: 1035.10 N
+  Trial 3: 1123.76 N
+  Trial 4: 958.82 N
+  Trial 5: 1023.05 N
+Average max force (5 trials): 1078.97 N
+Tensile strength (5 trials): 21.58 MPa
+
+

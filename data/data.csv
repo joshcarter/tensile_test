@@ -4,14 +4,16 @@ Siraya Tech,PET-CF,Black,86.71,15.19,extrusion_width=0.42;layer_height=0.2;print
 Siraya Tech,PET-GF,Flat Dark Earth,70.57,18.41,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
 Polymaker,PLA,Silk Blue White,65.13,20.72,extrusion_width=0.42;layer_height=0.2;printer=Prusa XL;notes=stringy due to humidity
 Polymaker,PET-CF,Black,59.85,12.30,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
+Overture,PETG,Grey,56.85,21.58,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
 Siraya Tech,ASA-GF,Black,56.80,15.04,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
 Polymaker,PLA,Starlight Nebula,56.13,23.39,extrusion_width=0.42;layer_height=0.2;printer=Prusa XL;notes=stringy due to humidity
+Overture,PETG,White,54.52,21.25,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
+Overture,PETG,Blue,54.27,21.19,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
+Overture,PETG,Yellow,53.41,15.95,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
 eSun,PLA-CF,Flat Dark Earth,52.83,25.02,extrusion_width=0.4;layer_height=0.16;printer=Voron 2.4
-Overture,PETG,Yellow,52.54,,extrusion_width=0.6;layer_height=0.16;printer=Prusa XL
 Atomic Filament,PETG,Cosmic Graphite,50.22,13.22,extrusion_width=0.42;layer_height=0.2;printer=Prusa Mk3
 Atomic Filament,PETG-CF,Black,49.75,34.07,
 3DXTech,ASA-CF,Black,49.56,6.20,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
-Overture,PETG,White,48.85,9.64,extrusion_width=0.6;layer_height=0.16;printer=Prusa Mk3
 Polymaker,PLA Pro,Black,48.78,26.39,extrusion_width=0.42;layer_height=0.2;printer=Prusa XL;notes=stringy due to humidity
 3DXTech,ABS-GF,Black,48.67,11.93,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
 Atomic Filament,PETG,Metallic Silver,45.96,25.12,extrusion_width=0.42;layer_height=0.2;printer=Voron 2.4
