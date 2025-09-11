@@ -42,3 +42,25 @@ Average max force (5 trials): 1078.97 N
 Tensile strength (5 trials): 21.58 MPa
 
 
+=== Test Summary ===
+Manufacturer: Overture
+Material Type: PETG
+Color: Grey
+Axis: xy
+Cross-section area: 25 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 1352.60 N
+  Trial 2: 1403.30 N
+  Trial 3: 1384.75 N
+  Trial 4: 1315.23 N
+  Trial 5: 1400.01 N
+Average max force (5 trials): 1371.18 N (1011.33 lb-ft)
+Tensile strength (5 trials): 54.85 MPa (7954.92 PSI)
+
+
