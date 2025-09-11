@@ -210,8 +210,8 @@ class TestApp(App):
         out.write("Results:\n")
         for i, res in enumerate(self.results, 1):
             out.write(f"  Trial {i}: {res:.2f} N\n")
-        out.write(f"Average max force ({completed_trials} trials): {TEST_RESULT_FORCE:.2f} N\n")
-        out.write(f"Tensile strength ({completed_trials} trials): {TEST_RESULT_STRENGTH:.2f} MPa\n")
+        out.write(f"Average max force ({completed_trials} trials): {TEST_RESULT_FORCE:.2f} N ({TEST_RESULT_FORCE * 0.737562:.2f} lb-ft)\n")
+        out.write(f"Tensile strength ({completed_trials} trials): {TEST_RESULT_STRENGTH:.2f} MPa ({TEST_RESULT_STRENGTH * 145.038:.2f} PSI)\n")
         out.write("\n\n")
         out.flush()
 
