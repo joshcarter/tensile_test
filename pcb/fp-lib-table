@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "Pico-HX711")(type "KiCad")(uri "${KIPRJMOD}/Pico-HX711.pretty")(options "")(descr ""))
+)
