@@ -1,0 +1,46 @@
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PA6-GF25 (annealed)
+Color: Gray
+Axis: z
+Cross-section area: 50 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Notes: overextruded non-authoritative
+Results:
+  Trial 1: 963.24 N
+  Trial 2: 913.29 N
+  Trial 3: 911.80 N
+  Trial 4: 856.89 N
+  Trial 5: 975.41 N
+Average max force (5 trials): 924.13 N (681.60 lb-ft)
+Tensile strength (5 trials): 18.48 MPa (2680.67 PSI)
+
+
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PA6-GF25 (annealed)
+Color: Gray
+Axis: xy
+Cross-section area: 25 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Notes: overextruded non-authoritative, 24hr 100C air annealed
+Results:
+  Trial 1: 1540.52 N
+  Trial 2: 1595.00 N
+  Trial 3: 1725.59 N
+  Trial 4: 1807.87 N
+  Trial 5: 1603.63 N
+Average max force (5 trials): 1654.52 N (1220.31 lb-ft)
+Tensile strength (5 trials): 66.18 MPa (9598.75 PSI)
+
+

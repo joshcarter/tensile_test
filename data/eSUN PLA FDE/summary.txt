@@ -1,0 +1,43 @@
+=== Test Summary ===
+Manufacturer: eSUN
+Material Type: PLA
+Color: FDE
+Axis: xy
+Cross-section area: 25 mm²
+Trials planned: 4
+Trials completed: 4
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Prusa XL
+Results:
+  Trial 1: 1511.95 N
+  Trial 2: 1481.31 N
+  Trial 3: 1505.53 N
+  Trial 4: 1435.17 N
+Average max force (4 trials): 1483.49 N (1094.16 lb-ft)
+Tensile strength (4 trials): 59.34 MPa (8606.49 PSI)
+
+
+=== Test Summary ===
+Manufacturer: eSUN
+Material Type: PLA
+Color: FDE
+Axis: z
+Cross-section area: 50 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Prusa XL
+Results:
+  Trial 1: 1180.59 N
+  Trial 2: 1382.48 N
+  Trial 3: 1026.09 N
+  Trial 4: 1224.15 N
+  Trial 5: 1289.68 N
+Average max force (5 trials): 1220.60 N (900.27 lb-ft)
+Tensile strength (5 trials): 24.41 MPa (3540.66 PSI)
+
+

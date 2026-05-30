@@ -27,3 +27,5 @@ Polymaker,PLA,Marble White,34.78,12.34,extrusion_width=0.42;layer_height=0.2;pri
 Polymaker,PLA,Matte Black,33.30,9.45,extrusion_width=0.42;layer_height=0.2;printer=Prusa XL;notes=stringy due to humidity
 Polymaker,PLA-CF,Black,32.86,9.96,extrusion_width=0.42;layer_height=0.2;printer=Prusa XL
 Taulman,Bridge,Clear,31.11,24.34,
+eSUN,PLA,Flat Dark Earth,59.34,24.41,extrusion_width=0.42;layer_height=0.2;printer=Prusa XL
+Polymaker,PA6-GF25 (annealed),Gray,66.18,18.48,extrusion_width=0.4;layer_height=0.2;printer=Voron 2.4,notes=overextruded air annealed 100C 24hrs

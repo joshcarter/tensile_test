@@ -68,8 +68,8 @@ serial.timeout = 0
 
 # ——— Try Load Calibration ———
 use_newtons = False
-offset = 0
-slope = 1
+offset = 0.0
+slope = 1.0
 try:
     with open("calibration.json", "r") as f:
         cal = json.load(f)
