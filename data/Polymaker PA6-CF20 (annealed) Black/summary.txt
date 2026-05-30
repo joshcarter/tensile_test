@@ -1,0 +1,46 @@
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PA6-CF20 (annealed)
+Color: Black
+Axis: z
+Cross-section area: 50 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Notes: air annealed 24hr 100C
+Results:
+  Trial 1: 471.94 N
+  Trial 2: 462.45 N
+  Trial 3: 493.93 N
+  Trial 4: 492.90 N
+  Trial 5: 474.22 N
+Average max force (5 trials): 479.09 N (353.36 lb-ft)
+Tensile strength (5 trials): 9.58 MPa (1389.72 PSI)
+
+
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PA6-CF20 (annealed)
+Color: Black
+Axis: xy
+Cross-section area: 25 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Notes: air annealed 24hr 100C
+Results:
+  Trial 1: 1711.25 N
+  Trial 2: 1767.38 N
+  Trial 3: 1776.11 N
+  Trial 4: 1725.06 N
+  Trial 5: 1749.15 N
+Average max force (5 trials): 1745.79 N (1287.63 lb-ft)
+Tensile strength (5 trials): 69.83 MPa (10128.23 PSI)
+
+

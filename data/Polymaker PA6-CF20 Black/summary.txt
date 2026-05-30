@@ -1,0 +1,62 @@
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PA6-CF20
+Color: Black
+Axis: xy
+Cross-section area: 25 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 1525.89 N
+  Trial 2: 1625.46 N
+  Trial 3: 1596.58 N
+  Trial 4: 1384.90 N
+  Trial 5: 1672.48 N
+Average max force (5 trials): 1561.06 N (1151.38 lb-ft)
+Tensile strength (5 trials): 62.44 MPa (9056.53 PSI)
+
+
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PA6-CF20
+Color: Black
+Axis: xy
+Cross-section area: 25 mm²
+Trials planned: 1
+Trials completed: 1
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 1459.04 N
+Average max force (1 trials): 1459.04 N (1076.13 lb-ft)
+Tensile strength (1 trials): 58.36 MPa (8464.64 PSI)
+
+
+=== Test Summary ===
+Manufacturer: Polymaker
+Material Type: PA6-CF20
+Color: Black
+Axis: z
+Cross-section area: 50 mm²
+Trials planned: 5
+Trials completed: 5
+Threshold: 50.0 N
+Extrusion width: 0.42 mm
+Layer height: 0.2 mm
+Printer: Voron 2.4
+Results:
+  Trial 1: 480.11 N
+  Trial 2: 473.97 N
+  Trial 3: 478.92 N
+  Trial 4: 429.15 N
+  Trial 5: 434.74 N
+Average max force (5 trials): 459.38 N (338.82 lb-ft)
+Tensile strength (5 trials): 9.19 MPa (1332.54 PSI)
+
+
