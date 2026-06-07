@@ -1,4 +1,5 @@
 import time
+import gc
 import board
 import digitalio
 import usb_cdc
@@ -19,9 +20,12 @@ class HX711:
         self.reset()
 
     def reset(self):
-        # Reset HX711 by toggling clock
+        # Reset HX711: hold PD_SCK high >60us to trigger power-down + reset,
+        # then bring it back low to power up.
+        self.pSCK.value = True
+        time.sleep(0.0001)
         self.pSCK.value = False
-        time.sleep(0.001)
+        time.sleep(0.0001)
 
     def is_ready(self):
         return not self.pOUT.value
@@ -35,23 +39,26 @@ class HX711:
                 return None  # Return None on timeout
             time.sleep(0.0001)
 
-        # Read 24 bits
-        result = 0
-        for _ in range(24):
-            self.pSCK.value = True
-            time.sleep(0.000001)  # Small delay for signal stability
-            result = result << 1
-            self.pSCK.value = False
-            if self.pOUT.value:
-                result += 1
-            time.sleep(0.000001)
+        # Disable GC so a collection pause can't stall us mid-shift. If PD_SCK
+        # is held high for >60us the HX711 powers down and corrupts the read,
+        # which shows up as occasional large spikes in the data.
+        gc.disable()
+        try:
+            # Read 24 bits
+            result = 0
+            for _ in range(24):
+                self.pSCK.value = True
+                result = result << 1
+                self.pSCK.value = False
+                if self.pOUT.value:
+                    result += 1
 
-        # Set gain for next reading
-        for _ in range(1 if self.gain == 128 else 2 if self.gain == 32 else 3):
-            self.pSCK.value = True
-            time.sleep(0.000001)
-            self.pSCK.value = False
-            time.sleep(0.000001)
+            # Set gain for next reading
+            for _ in range(1 if self.gain == 128 else 2 if self.gain == 32 else 3):
+                self.pSCK.value = True
+                self.pSCK.value = False
+        finally:
+            gc.enable()
 
         # Convert from 2's complement
         if result & 0x800000:
