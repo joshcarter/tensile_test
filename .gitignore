@@ -1,5 +1,8 @@
 pcb/Pico-HX711-backups
 
+/.idea/
+/.claude
+/.mcp.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
